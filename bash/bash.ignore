@@ -1,0 +1,169 @@
+#! /bin/bash
+
+# MAIN ENVS
+export YX=/home/yx
+export FILES=$YX/files
+export SEC=$YX/sec
+export DEV=$FILES/dev
+export BIB=$DEV/bib
+export PRJ=$DEV/prj
+export DRAFTS=$DEV/drafts
+export EDITOR=vim
+
+# OTHER ENVS
+export HTTP_SERVERS_FILE=$SEC/http.json
+
+# PATH
+export PATH=/usr/local/texlive/2023/bin/x86_64-linux:$PATH
+export PATH="/home/yx/.local/bin:$PATH"
+export PATH=/home/yx/.cargo/bin:$PATH
+
+# KEYS
+source $SEC/API.env
+
+# INCLUDES
+source $DRAFTS/sh/include/include
+
+declare -A INCLUDES
+INCLUDES[sr]="$DRAFTS/sh/sr/sr"
+source $PRJ/sh/web/web
+source $PRJ/sh/g/g
+source $DRAFTS/sh/pm/pm
+source $DRAFTS/sh/dot/dot
+source $DRAFTS/sh/mon/mon
+source $DRAFTS/sh/aliases/aliases
+source $DRAFTS/sh/make/make
+source $DRAFTS/sh/multline/multline
+source $DRAFTS/sh/http/http
+source $PRJ/sh/py/py
+include "*"
+
+source $DRAFTS/sh/mnt/mnt
+source $DRAFTS/sh/disk/disk
+
+# ALIASES
+alias wa="web --add"
+alias wl="web --list"
+alias ws="web --search"
+alias ascii="figlet -f bigmoney-ne"
+alias draw="$BIN/draw"
+
+function inks(){
+    inkscape "$@" & disown
+}
+
+
+# FUNCIONS
+function snip(){
+    SNIP_DIR="$CONF_VIM/snippets"
+    snippets=($(find $SNIP_DIR -mindepth 1 -maxdepth 1 -type f -name "*.snippets" -printf '%P\n'))
+    for i in ${!snippets[@]}; do
+        snippet=${snippets[$i]}
+        names[$i]=${snippet%.*}
+    done
+    if [[ -z "$1" ]]; then
+        cd $SNIP_DIR
+    elif [[ "${names[@]}" =~ "$1" ]]; then
+        cd -c 'startinsert' $SNIP_DIR/$1.snippets
+    else
+        echo "error: there is no snippet file named \"$1\"."
+        return 1
+    fi
+}
+
+function ssh_set(){
+    declare -A keys
+    keys[intui]="$HOME/.ssh/intui/id_ed25519_yxm"
+    keys[vortice]="$HOME/.ssh/vortice/id_ed25519"
+    keys[main]="$HOME/.ssh/id_ed25519"
+
+    if [[ "${keys[@]}" =~ "$1" ]]; then
+        eval "$(ssh-agent -s)" > /dev/null 2>&1
+        ssh-add ${keys[$1]}
+    else
+        echo "error: \"$1\" is not a registered key."
+    fi
+}
+
+# VORTICE
+
+export VOR="$YX/files/dev/vor"
+export VOR_CERT="$SEC/vortice/cert"
+
+function vor_1(){
+    ssh_set vortice
+    ssh ubuntu@201.54.9.220
+}
+
+function vor_2(){
+    ssh_set vortice
+    ssh ubuntu@201.23.70.103
+}
+
+alias chat="google-chat-linux & disown && exit"
+alias cert="\
+  openssl genrsa -out $VOR_CERT/qwac.key 2048 && \
+  openssl req -new \
+    -config $VOR_CERT/qwac.conf \
+    -key $VOR_CERT/qwac.key \
+    -out $VOR_CERT/qwac.csr && \
+  openssl x509 -req \
+    -in $VOR_CERT/qwac.csr \
+    -signkey $VOR_CERT/qwac.key \
+    -out $VOR_CERT/qwac.crt \
+    -days 365 \
+    -extfile $VOR_CERT/qwac.conf \
+    -extensions v3_req && \
+  openssl x509 -in $VOR_CERT/qwac.crt -pubkey -noout > $VOR_CERT/qwac.pem"
+
+
+# OTHER
+function up(){
+    yx=(typed utils comp gdrive canva rclone cli api search builder grid system)
+    vor=(sdk sites)
+    py u $1
+    for x in ${yx[@]}; do
+        if [[ "$x" == "$1" ]]; then
+            py i ximenesyuri/$1 --from github --protocol https --no-deps
+        fi
+    done
+    for x in ${vor[@]}; do
+        if [[ "$x" == "$1" ]]; then
+            py i vorticed/$1 --from github --protocol ssh --no-deps
+        fi
+    done
+    if [[ -z "$1" ]]; then
+        for x in ${yx[@]}; do
+            up $x
+        done
+        for x in ${vor[@]}; do
+            up $x
+        done
+    fi
+}
+
+alias toc="toc -i"
+
+# BIB FUNCTION
+function bib() {
+    if [ -z $BIB ]; then
+        echo "BIB env not defined."
+        return 1
+    fi
+    local line filepath basename
+    line=$(find "$BIB" -maxdepth 1 -type f -name '*.pdf' \
+        | awk -F/ '{print $0 "\t" gensub(/\.pdf$/, "", 1, $NF)}' \
+        | sort --reverse -t$'\t' -k2 \
+        | fzf --with-nth=2 --delimiter='\t' \
+            --preview 'pdftotext {1} - | head -40' --preview-window=right:70%)
+    [ -z "$line" ] && return
+    filepath="${line%%$'\t'*}"
+    basename="${line#*$'\t'}"
+    [ -n "$filepath" ] && zathura "$filepath"
+}
+
+function importtime(){
+    if [[ -n "$1" ]]; then
+        python -X importtime $1 2>&1 | grep "import time:" | awk '{ print $5, $NF }' | sort -rn | head -n ${2:-100}
+    fi
+}

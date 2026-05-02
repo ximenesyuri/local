@@ -1,0 +1,8 @@
+#! /bin/bash 
+    alias bashrc="vim $HOME/.bashrc"
+    alias bashc="vim $CONF/bash/bashrc"
+    alias basha="vim $CONF/bash/bashra"
+    alias bashp="vim $CONF/bash/bash.ignore"
+    alias vimrc="vim $VIM/vimrc"
+    alias vimrk="vim $VIM/vimrk"
+    alias vimrp="vim $VIM/vimrp"
