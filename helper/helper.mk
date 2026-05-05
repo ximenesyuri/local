@@ -14,6 +14,11 @@ define __clone
 	done
 endef
 
+define __pip
+	for x in $(1); do
+		pip install $$x --break-system-packages --quiet
+	done
+
 define __make
 	if [ ! -f $(2)/Makefile ]; then
 		echo "error: missing Makefile in $(2)." && exit 1

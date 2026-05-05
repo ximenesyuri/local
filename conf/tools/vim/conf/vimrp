@@ -47,7 +47,7 @@
     function! ShowDocumentation()
         if CocAction('hasProvider', 'hover')
             call CocAction('doHover')
- s           sleep 1
+            sleep 1
             startinsert
         endif
     endfunction
