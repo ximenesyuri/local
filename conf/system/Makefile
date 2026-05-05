@@ -1,6 +1,6 @@
 SYSTEMS := i3 xorg
 
-include $(__LOCAL)/helper/helper.mk
+include $(ENV_PATH)/helper/helper.mk
 
 .ONESHELL:
 

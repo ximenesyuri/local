@@ -1,7 +1,6 @@
-ENV   := $(ENVS[$__ENV])
 TOOLS := vim
 
-include $(ENV)/helper/helper.mk
+include $(ENV_PATH)/helper/helper.mk
 
 .ONESHELL:
 

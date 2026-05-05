@@ -17,7 +17,7 @@ endfunction
 
 function! s:__filetypes()
     for ft in s:FILETYPES
-        execute 'autocmd FileType ' . ft . ' call s:__source("' . ft . '.vim")'
+        execute 'autocmd FileType ' . ft . ' call s:__source("filetype/' . ft . '.vim")'
     endfor
 endfunction
 
