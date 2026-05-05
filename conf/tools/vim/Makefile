@@ -1,4 +1,4 @@
-__HERE     := $(__LOCAL)/conf/tools/vim
+__HERE     := $(ENV_PATH)/conf/tools/vim
 __CONF     := $(__HERE)/conf
 __SCRIPTS  := $(__CONF)/scripts
 __OTHER    := $(__CONF)/others
@@ -16,7 +16,7 @@ __SNIPS__  := $(__CONF__)/snips
 __INIT__   := $(__CONF__)/vimrc
 __LSP__    := $(__CONF__)/coc-settings.json
 
-include $(__LOCAL)/helper/helper.mk
+include $(ENV_PATH)/helper/helper.mk
 
 .ONESHELL:
 

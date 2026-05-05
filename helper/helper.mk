@@ -8,6 +8,12 @@ define __link
 
 endef
 
+define __clone
+	for x in $(1); do
+		git clone https://github.com/$$x $(2)/$${x##*/}
+	done
+endef
+
 define __make
 	if [ ! -f $(2)/Makefile ]; then
 		echo "error: missing Makefile in $(2)." && exit 1

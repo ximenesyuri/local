@@ -1,7 +1,8 @@
-TOOLS  := $(__LOCAL)/conf/tools
-SYSTEM := $(__LOCAL)/conf/system
+ENV    := $(ENV_PATH)
+TOOLS  := $(ENV)/conf/tools
+SYSTEM := $(ENV)/conf/system
 
-include $(__LOCAL)/helper/helper.mk
+include $(ENV)/helper/helper.mk
 
 .ONESHELL:
 
