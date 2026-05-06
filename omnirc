@@ -1,0 +1,6 @@
+ENVS["local"]="/home/yx/local"
+ENV_VARS["local"]="path:/home/yx/local,bin:/home/yx/bin,tmp:/home/yx/tmp,sec:/home/yx/sec"
+__ENV="local"
+ENV_SCRIPTS["local"]="dot,open,import,comma,"
+ENV_OPEN["local"]="*:vim,"
+ENV_COMMA["local"]="vor:/home/yx/etc/vor:dot,"
