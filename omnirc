@@ -1,6 +1,6 @@
-ENVS["local"]="/home/yx/local"
-ENV_VARS["local"]="path:/home/yx/local,bin:/home/yx/bin,tmp:/home/yx/tmp,sec:/home/yx/sec"
+ENVS+=(local)
+ENV_VARS["local"]="path:/home/yx/local,bin:/home/yx/bin,tmp:/home/yx/tmp,sec:/home/yx/sec,mnt:/home/yx/mnt"
 __ENV="local"
-ENV_SCRIPTS["local"]="dot,open,import,comma,"
-ENV_OPEN["local"]="*:vim,"
-ENV_COMMA["local"]="vor:/home/yx/etc/vor:dot,"
+ENV_TOOLS["local"]="dot,open,comma,"
+ENV_OPEN["local"]=",*:vim,"
+ENV_COMMA["local"]="typed:/home/yx/etc/dev/typed/typed:dot,typed.api:/home/yx/etc/dev/typed/api:dot,typed.cli:/home/yx/etc/dev/typed/cli:dot,typed.model:/home/yx/etc/dev/typed/model:dot,typed.system:/home/yx/etc/dev/typed/system:dot,typed.utils:/home/yx/etc/dev/typed/utils:dot,omni:/home/yx/etc/dev/omni/omni:dot,omni.tools:/home/yx/etc/dev/omni/tools:dot,omni.contexts:/home/yx/etc/dev/omni/contexts:dot,"
