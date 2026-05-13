@@ -1,10 +1,12 @@
 #! /bin/bash
 
-__var(){
+__prompt(){
     local __CWD="\[\033[37m\]\w\[\033[00m\]"
     export PS1="${__CWD}\$ "
-    export LS_COLORS=$LS_COLORS:'di=0;94:'
+    export LS_COLORS=$LS_COLORS:'di=0;94:' 
+}
 
+__export() {
     export EDITOR=vim
     export BROWSER=firefox
 }
@@ -55,8 +57,14 @@ __func() {
 
 }
 
-__var
+__tools() {
+    source ~/etc/dev/__old/sh/py/py
+}
+
+__prompt
+__export
 __alias
 __func
+__tools
 
-unset -f __var __alias __func
+unset -f __prompt __export __alias __func

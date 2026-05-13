@@ -18,6 +18,7 @@ define __pip
 	for x in $(1); do
 		pip install $$x --break-system-packages --quiet
 	done
+endef
 
 define __make
 	if [ ! -f $(2)/Makefile ]; then

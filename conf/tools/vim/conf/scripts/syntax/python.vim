@@ -9,7 +9,7 @@ syn match pythonFunctionCall '\%([^[:cntrl:]:[:space:][:punct:][:digit:]]\|_\)\%
 syn keyword pythonStatement     break continue del return pass yield global assert lambda with
 syn keyword pythonStatement     raise nextgroup=pythonExClass skipwhite
 syn keyword pythonStatement     class nextgroup=pythonClass skipwhite
-syn keyword pythonSpecialVar    self cls mcs type meta term
+syn keyword pythonSpecialVar    self cls mcs typ met trm
 syn keyword pythonRepeat        for while
 syn keyword pythonConditional   if elif else
 syn keyword pythonException     try except finally

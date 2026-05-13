@@ -42,21 +42,7 @@
     inoremap <expr> <down> coc#pum#visible() ? coc#pum#next(1) : (pumvisible() ? "\<lt>down>" : "\<lt>c-o>gj")
     inoremap <expr> <up> coc#pum#visible() ? coc#pum#prev(1) : (pumvisible() ? "\<lt>up>" : "\<lt>c-o>gk")
     inoremap <expr> <tab> coc#pum#visible() ? coc#pum#insert() : "\<tab>"
-    inoremap <expr> <cr> coc#pum#visible() ? coc#pum#insert() : "\<cr>"
-">> 'ctrl+d' to show documentation
-    function! ShowDocumentation()
-        if CocAction('hasProvider', 'hover')
-            call CocAction('doHover')
-            sleep 1
-            startinsert
-        endif
-    endfunction
-    inoremap <silent> <c-d> <esc>:call ShowDocumentation()<cr>
-">> '<leader>d' to go to definition
-    nnoremap <leader>d :rightbelow call CocActionAsync('jumpDefinition', 'vsplit')<CR>:vert resize 80<CR>
-    inoremap <leader>d <esc>:rightbelow call CocActionAsync('jumpDefinition', 'vsplit')<CR>:vert resize 80<CR>
-" >> 'ctrl-p' to open preview in markdown file
-    autocmd FileType markdown inoremap <c-p> <esc>:CocCommand markdown-preview-enhanced.openPreview<cr>i 
+    inoremap <expr> <cr> coc#pum#visible() ? coc#pum#insert() : "\<cr>" 
 
 " VIM-AI
 ">> setting the token file

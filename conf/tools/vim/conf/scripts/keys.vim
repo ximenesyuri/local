@@ -6,21 +6,20 @@
     xnoremap U <nop>
     nnoremap gu <nop>
     nnoremap gU <nop>
-">> replace mode
+"> replace mode
     inoremap <insert> <nop>
     nnoremap r <nop>
     nnoremap R <nop>
 "> search cursor word
     nnoremap # <nop>
+    nnoremap * <nop>
 "> tab with ctrl+t
     inoremap <c-t> <nop>
 "> other
-    "inoremap <c-o> <nop>
-    "nnoremap <c-o> <nop>
     vnoremap <c-d> <nop>
 
 " SETTING
-"> setting leader key to `,,`
+"> setting leader key to `]`
     let mapleader = ']'
 
 " INDENTATION
@@ -59,12 +58,10 @@
     vnoremap <down> gj
 
 " SEARCHING
-"> 'ctrl+f' or ',,f' to search.
+"> 'ctrl+f' to search.
     nnoremap <c-f> /
     inoremap <c-f> <esc>/
-    nnoremap <leader>f /
-    inoremap <leader>f <esc>/
-"> ',,s' to search and replace
+"> ']s' to search and replace
     nnoremap <leader>s :%s/foo/bar/g
     inoremap <leader>s <esc>:%s/foo/bar/g
     vnoremap <leader>s :s/foo/bar/g
@@ -148,13 +145,18 @@
     inoremap <c-z> <c-o>u
     inoremap <c-r> <esc><c-r>i
 
+" COMPLETION
+"> '/' to trigger omni file completion
+    inoremap / /<C-x><C-f>
+    set shortmess+=c
+
 " WINDOWS, TABS, BUFFERS and TABLINES
-">> 'ctrl+tab' and 'alt+tab' to change tab
+"> 'ctrl+tab' and 'alt+tab' to change tab
     nnoremap <c-tab> gt :startinsert<cr>
     inoremap <c-tab> <esc>gt :startinsert<cr>
     nnoremap <m-tab> gT :startinsert<cr>
     inoremap <m-tab> <esc>gT :startinsert<cr>
-">> 'alt+left', 'alt+right', 'alt+up' and 'alt+down' to change window
+"> 'alt+<arrow>' to change window
     nnoremap <m-right> :winc l<cr>
     inoremap <m-right> <esc>:winc l<cr>
     nnoremap <m-left> :winc h<cr>
@@ -163,7 +165,7 @@
     inoremap <m-down> <esc>:winc j<cr>
     nnoremap <m-up> :winc k<cr>
     inoremap <m-up> <esc>:winc k<cr>
-">> 'ctrl+t' to open/close a terminal session. 'ctrl+q' to close it.
+"> 'ctrl+t' to open/close a terminal session. 'ctrl+q' to close it.
     nnoremap <c-t> :botright :term ++close<cr>
     inoremap <c-t> <esc>:botright :term ++close<cr>
     tnoremap <c-t> <c-d>

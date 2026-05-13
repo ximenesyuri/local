@@ -7,3 +7,5 @@ function! RememberPosition()
         normal! gg^
     endif
 endfunction
+
+autocmd BufReadPost * call RememberPosition()
