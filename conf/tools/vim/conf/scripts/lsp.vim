@@ -7,8 +7,8 @@ function! s:__lsp__(auto, snips)
     function! l:lsp.keys() dict
         inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<tab>"
         inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-        inoremap <expr> <CR> pumvisible() ? "\<C-y>\<C-e>\<backspace>" : "\<CR>"
-        inoremap <expr> <Space> pumvisible() ? "\<C-y>\<Space>" : "\<Space>"
+        inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
+        inoremap <expr> <Space> pumvisible() ? "\<C-y>\<space>" : "\<Space>"
         inoremap <expr> <Down> pumvisible() ? "\<C-e>\<Down>" : "\<Down>"
         inoremap <expr> <Up> pumvisible() ? "\<C-e>\<Up>" : "\<Up>"
         inoremap <expr> <Left> pumvisible() ? "\<C-e>\<Left>" : "\<Left>"

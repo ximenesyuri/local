@@ -287,4 +287,5 @@ hi link pythonDot Delimiter
 hi link pythonStringPrefix Constant
 
 let b:current_syntax = 'python'
-
+syn sync minlines=256
+syn sync maxlines=1000
