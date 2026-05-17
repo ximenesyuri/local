@@ -58,7 +58,11 @@ __func() {
 }
 
 __tools() {
-    source ~/etc/dev/__old/sh/py/py
+    source ~/etc/dev/__old/sh/py/py 
+}
+
+__sec() {
+    source $SEC/API.env
 }
 
 __prompt
@@ -66,5 +70,6 @@ __export
 __alias
 __func
 __tools
+__sec
 
 unset -f __prompt __export __alias __func
