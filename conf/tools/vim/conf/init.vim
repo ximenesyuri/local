@@ -2,8 +2,8 @@ let s:__HERE = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 let s:__SCRIPTS = s:__HERE . '/scripts'
 let s:__OTHER   = s:__HERE . '/other'
 
-let s:GLOBALS   = ['base', 'keys', 'ai', 'lsp', 'helper/remember']
-let s:FILETYPES = ['python', 'markdown', 'sh']
+let s:GLOBALS   = ['base', 'keys', 'lsp', 'helper/remember']
+let s:FILETYPES = ['python', 'markdown', 'ai', 'sh']
 
 function! s:EnableIndentLines()
     setlocal list
@@ -32,6 +32,7 @@ endfunction
 function! s:__filetypes()
     for ft in s:FILETYPES
         execute 'autocmd FileType ' . ft . ' call s:__source("filetype/' . ft . '")'
+        execute 'autocmd BufEnter *.' . ft . ' set filetype='. ft 
     endfor
 endfunction
 

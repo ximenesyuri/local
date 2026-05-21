@@ -62,7 +62,7 @@ __tools() {
 }
 
 __sec() {
-    source $SEC/API.env
+    source $SEC/export.env
 }
 
 __prompt

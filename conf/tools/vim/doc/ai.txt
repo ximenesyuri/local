@@ -1,0 +1,83 @@
+==============================================================================
+AI.VIM DOCUMENTATION                                         ai_doc.txt
+==============================================================================
+
+The ai.vim library is a heavily text-driven, marker-based LLM integration 
+for Vim. It reads specific "marker" lines in your buffer to determine what 
+to send to the model, whether to include file/URL contexts, and whether to 
+treat the interaction as a standalone query or a threaded conversation.
+
+KEY BINDING
+-----------
+Inside any `.ai` file, use `<Ctrl + g>` (in normal or insert mode) to 
+trigger the AI to process the current block.
+
+1. BASIC QUERIES (>>> input)
+----------------------------
+Use the `>>> input` marker to ask a standalone question. You can optionally 
+append the model name right after the marker.
+
+    >>> input claude-3
+    Write a python function to reverse a string.
+
+Press `<C-g>`. The plugin will fetch the text, send it to the model, and 
+automatically insert the response below a `>>> output` marker.
+
+2. CONVERSATIONS (>>> thread)
+-----------------------------
+If you want the model to remember previous turns in the current scope, use 
+`>>> thread` instead of `input`.
+
+    >>> thread gpt-4o
+    What is the capital of France?
+
+    >>> output by gpt-4o
+    The capital of France is Paris.
+
+    >>> thread
+    And what is its population?
+
+Running `<C-g>` on the last thread sends the entire conversation history 
+(up to the previous `>>> end` or `>>> forget` markers) so the model has 
+the full context.
+
+3. PROVIDING CONTEXT (>>> context)
+----------------------------------
+You can feed files, entire directories, URLs, or system instructions into 
+the model's context. Place a `>>> context` marker and list your resources 
+below it.
+
+    >>> context
+    role: You are an expert code reviewer.
+    file: src/main.py
+    dir: src/utils/
+    url: https://docs.python.org/3/library/json.html
+    ignore: *.pyc
+
+    >>> input
+    Review the code provided in the context and suggest improvements.
+
+Available context keys:
+  role:   Sets the system prompt/behavior.
+  file:   Reads a local file (supports images if the model has vision).
+  dir:    Reads all files in a directory.
+  url:    Fetches the raw HTML/text of a webpage to pass to the model.
+  ignore: Adds a glob pattern to skip certain files (useful with `dir:`).
+
+4. SCOPE MANAGEMENT (>>> end / >>> forget)
+------------------------------------------
+Because ai.vim scans upwards to build the thread history and context, you 
+can isolate multiple different conversations in the same file.
+
+  >>> end    : Completely ends the current context and conversation thread. 
+               Anything below this acts as a fresh slate.
+  >>> forget : Clears the conversation history (thread) but retains the 
+               active `>>> context` definitions above it.
+
+5. CONFIGURATION VARIABLES
+--------------------------
+Set these globally in your vimrc or init.vim:
+  g:ai_models           : Dictionary mapping aliases to full model names.
+  g:ai_ignore           : Global list of ignore patterns (e.g. node_modules).
+  g:ai_max_file_bytes   : Limits how much text is read from large files.
+  g:ai_max_file_lines   : Limits the number of lines read from large files.

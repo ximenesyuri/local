@@ -7,7 +7,7 @@ function! s:__lsp__(auto, snips)
     function! l:lsp.keys() dict
         inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<tab>"
         inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-        inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
+        inoremap <expr> <CR> pumvisible() ? (complete_info()['selected'] != -1 ? "\<C-y>" : "\<C-n>\<C-y>") : "\<CR>"
         inoremap <expr> <Space> pumvisible() ? "\<C-y>\<space>" : "\<Space>"
         inoremap <expr> <Down> pumvisible() ? "\<C-e>\<Down>" : "\<Down>"
         inoremap <expr> <Up> pumvisible() ? "\<C-e>\<Up>" : "\<Up>"
