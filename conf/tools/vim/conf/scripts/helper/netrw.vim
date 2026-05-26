@@ -3,7 +3,7 @@
 ">> hide banner
     let g:netrw_banner = 0
 ">> allow toggle hide
-    let g:netrw_hide= 1
+    let g:netrw_hide = 1
 ">> hide dot files by default
     let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
 ">> windows size
@@ -43,13 +43,4 @@
         au FileType netrw nmap <buffer> <left> -cd
 ">> 'r' to refresh Netrw
         au FileType netrw nmap <buffer> r <c-l>
-">> 'mkf', 'd', 'D' , 'mv' and 'cp' to do the basic stuff
-        au FileType netrw nmap <buffer> mkf cd:AsyncRun touch 
-        au FileType netrw nmap <buffer> mkd cd:AsyncRun mkdir 
-        au FileType netrw nmap <buffer> .mf cd:AsyncRun touch 
-        au FileType netrw nmap <buffer> .md cd:AsyncRun mkdir 
-        au FileType netrw nmap <buffer> d cd:AsyncRun .d 
-        au FileType netrw nmap <buffer> rm cd:AsyncRun rm -r 
-        au FileType netrw nmap <buffer> mv cd:AsyncRun mv 
-        au FileType netrw nmap <buffer> cp cd:AsyncRun cp -r 
     augroup END
