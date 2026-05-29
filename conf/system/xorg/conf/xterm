@@ -75,10 +75,17 @@
 !! 'ctrl+j' to scroll down. 'ctrl+k' to scroll up
 !! 'shif+ctrl+c' to copy, 'shift+ctrl+v' to paste
 !! 'ctrl+alt+plus' to increase font size. 'ctrl+alt+minus' to decrease font size  
+!! 'ctrl+shift+f12' to dump terminal text (used by i3 dump script)
     *VT100.Translations: #override \n\
         Ctrl <Key>k: scroll-back(1) \n\
         Ctrl <Key>j: scroll-forw(1) \n\
         Shift Ctrl <Key>c: selected-end(CLIPBOARD) \n\
         Shift Ctrl <Key>v: insert-selection(CLIPBOARD) \n\ 
         Ctrl  Mod1 <Key>plus: larger-vt-font() \n\
-        Ctrl  Mod1 <Key>minus: smaller-vt-font()
+        Ctrl  Mod1 <Key>minus: smaller-vt-font() \n\
+        Ctrl Shift <Key>F12: print-everything()
+
+! PRINT OPERATIONS (Required for terminal dump script)
+    *allowPrintOps: true
+    *printerCommand: cat > /tmp/xterm_dump.txt
+    *printAttributes: 0

@@ -1,0 +1,41 @@
+#!/bin/bash
+
+WID=$(xdotool getactivewindow)
+CLASS=$(xdotool getwindowclassname $WID)
+
+IS_VIM=0
+
+if [[ "${CLASS,,}" == *"term"* ]]; then
+    PID=$(xdotool getwindowpid $WID)
+    if [[ -n "$PID" ]]; then
+        TTY=$(ps --ppid $PID -o tty= 2>/dev/null | grep -v '?' | head -n1)
+        if [[ -n "$TTY" ]]; then
+            if ps -t $TTY -o comm= 2>/dev/null | grep -iq '^\(n\)\?vim$'; then
+                IS_VIM=1
+            fi
+        fi
+    fi
+fi
+
+if [[ "${CLASS,,}" == *"term"* ]] && [ $IS_VIM -eq 0 ]; then
+    rm -f /tmp/xterm_dump.txt
+    xdotool windowfocus $WID
+    sleep 0.1
+    xdotool key --clearmodifiers --window $WID ctrl+shift+F12
+    
+    sleep 0.3
+    
+    if [ -s /tmp/xterm_dump.txt ]; then
+        i3-msg split h
+        xterm -ti vt340 -e vim /tmp/xterm_dump.txt &
+        XTERM_PID=$!
+        wait $XTERM_PID
+        
+        i3-msg move left 
+    else
+        notify-send "Xterm Dump Failed" "Could not generate /tmp/xterm_dump.txt"
+    fi
+
+else
+    xdotool key --window $WID ctrl+p
+fi
