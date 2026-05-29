@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [[ -z "$1" ]]; then
+    echo "Usage: $0 {up|down}"
+    exit 1
+fi
+
 BACKLIGHT_DIR=/sys/class/backlight
 DEVICE=$(ls $BACKLIGHT_DIR | head -n 1)
 
@@ -13,10 +18,21 @@ MAX_BRIGHTNESS_FILE="$BACKLIGHT_DIR/$DEVICE/max_brightness"
 
 CUR=$(cat $BRIGHTNESS_FILE)
 MAX=$(cat $MAX_BRIGHTNESS_FILE)
+STEP=1000
 
-NEW=$((CUR + 1000))
-if [ $NEW -gt $MAX ]; then
-    NEW=$MAX
+if [[ "$1" == "up" ]]; then
+    NEW=$((CUR + STEP))
+    if [ $NEW -gt $MAX ]; then
+        NEW=$MAX
+    fi
+elif [[ "$1" == "down" ]]; then
+    NEW=$((CUR - STEP))
+    if [ $NEW -lt 0 ]; then
+        NEW=0
+    fi
+else
+    echo "Invalid argument. Use 'up' or 'down'."
+    exit 1
 fi
 
 echo $NEW | sudo tee $BRIGHTNESS_FILE

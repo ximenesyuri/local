@@ -1,0 +1,33 @@
+#!/bin/bash
+
+WID=$(xdotool getactivewindow)
+CLASS=$(xdotool getwindowclassname $WID)
+IS_VIM=0
+
+if [[ "${CLASS,,}" == *"term"* ]]; then
+    PID=$(xdotool getwindowpid $WID)
+    
+    if [[ -n "$PID" ]]; then
+        TTY=$(ps --ppid $PID -o tty= 2>/dev/null | grep -v '?' | head -n1)
+        
+        if [[ -n "$TTY" ]]; then
+            if ps -t $TTY -o comm= 2>/dev/null | grep -iq '^\(n\)\?vim$'; then
+                IS_VIM=1
+            fi
+        fi
+    fi
+fi
+
+if [ $IS_VIM -eq 1 ]; then
+    xdotool key --window $WID ctrl+o
+elif [[ "${CLASS,,}" == *"term"* ]]; then
+    URL=$(xclip -o -sel primary 2>/dev/null | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+    if [[ -z "$URL" ]]; then
+        URL=$(xclip -o -sel clipboard 2>/dev/null)
+    fi
+    if [[ -n "$URL" ]]; then
+        firefox "$URL" &
+    fi
+else
+    xdotool key --window $WID ctrl+o
+fi

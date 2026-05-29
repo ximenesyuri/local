@@ -1,0 +1,31 @@
+#!/bin/bash
+
+WID=$(xdotool getactivewindow)
+CLASS=$(xdotool getwindowclassname $WID)
+IS_VIM=0
+
+if [[ "${CLASS,,}" == *"vim"* ]]; then
+    IS_VIM=1
+
+elif [[ "${CLASS,,}" == *"term"* ]]; then
+    PID=$(xdotool getwindowpid $WID)
+    
+    if [[ -n "$PID" ]]; then
+        TTY=$(ps --ppid $PID -o tty= 2>/dev/null | grep -v '?' | head -n1)
+        
+        if [[ -n "$TTY" ]]; then
+            if ps -t $TTY -o comm= 2>/dev/null | grep -iq '^\(n\)\?vim$'; then
+                IS_VIM=1
+            fi
+        fi
+    fi
+fi
+
+if [ $IS_VIM -eq 1 ]; then
+    xdotool key --window $WID ctrl+e
+else
+    TMPFILE=$(mktemp /tmp/notes_XXXXXX.md)
+    i3-msg split h
+    xterm -ti vt340 -e vim "$TMPFILE"
+    i3-msg move left
+fi
