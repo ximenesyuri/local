@@ -1,6 +1,10 @@
-
 set sandbox none
 set recolor
-set recolor-lightcolor \#222222
+set recolor-lightcolor \#000000
 set recolor-keephue
-set default-bg \#222230
+set default-bg \#000000
+
+set selection-clipboard clipboard
+
+map <PageDown> navigate next
+map <PageUp> navigate previous

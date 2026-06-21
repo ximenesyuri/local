@@ -1,13 +1,7 @@
 #! /bin/bash
 
 # MAIN ENVS
-export YX=/home/yx
-export FILES=$YX/files
-export SEC=$YX/sec
-export DEV=$FILES/dev
-export BIB=$DEV/bib
-export PRJ=$DEV/prj
-export DRAFTS=$DEV/drafts
+export DRAFTS=$HOME/etc/dev/drafts
 export EDITOR=vim
 
 # OTHER ENVS
@@ -18,35 +12,7 @@ export PATH=/usr/local/texlive/2023/bin/x86_64-linux:$PATH
 export PATH="/home/yx/.local/bin:$PATH"
 export PATH=/home/yx/.cargo/bin:$PATH
 
-# KEYS
-source $SEC/API.env
-
-# INCLUDES
-source $DRAFTS/sh/include/include
-
-declare -A INCLUDES
-INCLUDES[sr]="$DRAFTS/sh/sr/sr"
-source $PRJ/sh/web/web
-source $PRJ/sh/g/g
-source $DRAFTS/sh/pm/pm
-source $DRAFTS/sh/dot/dot
 source $DRAFTS/sh/mon/mon
-source $DRAFTS/sh/aliases/aliases
-source $DRAFTS/sh/make/make
-source $DRAFTS/sh/multline/multline
-source $DRAFTS/sh/http/http
-source $PRJ/sh/py/py
-include "*"
-
-source $DRAFTS/sh/mnt/mnt
-source $DRAFTS/sh/disk/disk
-
-# ALIASES
-alias wa="web --add"
-alias wl="web --list"
-alias ws="web --search"
-alias ascii="figlet -f bigmoney-ne"
-alias draw="$BIN/draw"
 
 function inks(){
     inkscape "$@" & disown
@@ -87,9 +53,6 @@ function ssh_set(){
 
 # VORTICE
 
-export VOR="$YX/files/dev/vor"
-export VOR_CERT="$SEC/vortice/cert"
-
 function vor_1(){
     ssh_set vortice
     ssh ubuntu@201.54.9.220
@@ -101,21 +64,6 @@ function vor_2(){
 }
 
 alias chat="google-chat-linux & disown && exit"
-alias cert="\
-  openssl genrsa -out $VOR_CERT/qwac.key 2048 && \
-  openssl req -new \
-    -config $VOR_CERT/qwac.conf \
-    -key $VOR_CERT/qwac.key \
-    -out $VOR_CERT/qwac.csr && \
-  openssl x509 -req \
-    -in $VOR_CERT/qwac.csr \
-    -signkey $VOR_CERT/qwac.key \
-    -out $VOR_CERT/qwac.crt \
-    -days 365 \
-    -extfile $VOR_CERT/qwac.conf \
-    -extensions v3_req && \
-  openssl x509 -in $VOR_CERT/qwac.crt -pubkey -noout > $VOR_CERT/qwac.pem"
-
 
 # OTHER
 function up(){
@@ -141,8 +89,6 @@ function up(){
         done
     fi
 }
-
-alias toc="toc -i"
 
 # BIB FUNCTION
 function bib() {

@@ -38,7 +38,7 @@ function! s:CreateStaticSyntaxRegion(start_pattern, end_pattern, filetype) abort
     let start_pat = '\V' . escape(a:start_pattern, '/\')
     let end_pat   = '\V' . escape(a:end_pattern,   '/\')
 
-    silent! highlight default link SyntaxRegionDelimiter Comment
+    silent! highlight default SyntaxRegionDelimiter ctermfg=1
 
     try
         execute 'syntax region ' . region_name
@@ -61,8 +61,8 @@ function! s:CreateDynamicSyntaxRegion(start_pattern, end_pattern) abort
         \ 'css':        'css',
         \ 'json':       'json',
         \ 'sql':        'sql',
-        \ 'sh':         'bash',
-        \ 'bash':       'bash',
+        \ 'sh':         'sh',
+        \ 'bash':       'sh',
         \ 'php':        'php',
         \}
 

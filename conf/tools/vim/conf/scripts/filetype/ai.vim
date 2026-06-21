@@ -49,6 +49,16 @@ function! s:__ai__()
         redraw
     endfunction
 
+    function! l:ai.parse_marker(lnum) dict
+        let l:res = {'kind': '', 'model': '', 'context': ''}
+        if a:lnum <= 0 | return l:res | endif
+        let l:line = getline(a:lnum)
+        let l:res.kind = matchstr(l:line, '^>>> \zs\(input\|continue\)\ze')
+        let l:res.model = matchstr(l:line, '\<model=\zs\S\+')
+        let l:res.context = matchstr(l:line, '\<context=\zs\S\+')
+        return l:res
+    endfunction
+
     function! l:ai.run(token, ...) dict
         let l:token = a:token
 
@@ -65,27 +75,21 @@ function! s:__ai__()
 
         let l:explicit_model = a:0 >= 1 ? a:1 : ''
 
-        let l:last_input  = search('^>>> input\>',  'bnW')
-        let l:last_thread = search('^>>> thread\>', 'bnW')
-        let l:last_output = search('^>>> output\>', 'bnW')
+        let l:last_input    = search('^>>> input\>',  'bnW')
+        let l:last_continue = search('^>>> continue\>', 'bnW')
+        let l:last_output   = search('^>>> output\>', 'bnW')
 
-        if l:last_output > l:last_input && l:last_output > l:last_thread
-            let l:orig_start = max([l:last_input, l:last_thread])
-            let l:kind = (l:orig_start == l:last_thread) ? 'thread' : 'input'
-
-            let l:orig_line = getline(l:orig_start)
-            let l:model_suffix = matchstr(l:orig_line, '^>>> \%(input\|thread\)\s\+\zs.*$')
-            if empty(trim(l:model_suffix))
-                let l:model_suffix = matchstr(getline(l:last_output), '^>>> output by \zs.*$')
-            endif
-            if empty(trim(l:model_suffix))
-                let l:model_suffix = !empty(l:explicit_model) ? l:explicit_model : 'google/gemini-2.5-flash'
-            endif
+        if l:last_output > max([l:last_input, l:last_continue])
+            let l:orig_start = max([l:last_input, l:last_continue])
+            let l:orig_params = self.parse_marker(l:orig_start)
+            
+            let l:context_suffix = !empty(l:orig_params.context) ? ' context=' . l:orig_params.context : ''
+            let l:model_suffix = !empty(l:orig_params.model) ? ' model=' . l:orig_params.model : ''
 
             let l:region_end = self.find_region_end(l:last_output)
 
             call append(l:region_end, '')
-            call append(l:region_end + 1, '>>> ' . l:kind . ' ' . l:model_suffix)
+            call append(l:region_end + 1, '>>> continue' . l:context_suffix . l:model_suffix)
             call append(l:region_end + 2, '')
 
             call cursor(l:region_end + 3, 1)
@@ -93,52 +97,53 @@ function! s:__ai__()
             return
         endif
 
-        if l:last_input == 0 && l:last_thread == 0
-            echoerr "AI: No '>>> input' or '>>> thread' marker found"
+        if l:last_input == 0 && l:last_continue == 0
+            echoerr "AI: No '>>> input' or '>>> continue' marker found"
             return
         endif
 
-        if l:last_thread > l:last_input
-            let l:kind  = 'thread'
-            let l:start = l:last_thread
+        let l:start = max([l:last_input, l:last_continue])
+        let l:marker_params = self.parse_marker(l:start)
+        let l:kind = l:marker_params.kind
+
+        if l:kind ==# 'continue'
+            let l:thread_start = search('^>>> input\>', 'bnW', 0)
+            if l:thread_start == 0
+                echoerr "AI: '>>> continue' without preceding '>>> input'"
+                return
+            endif
         else
-            let l:kind  = 'input'
-            let l:start = l:last_input
+            let l:thread_start = l:start
         endif
 
-        let l:model = self.resolve_model(l:start, l:explicit_model)
+        let l:model = self.resolve_model(l:start, l:explicit_model, l:marker_params)
         if empty(l:model)
             return
         endif
 
-        let l:region_end  = self.find_region_end(l:start)
-        let l:scope_start = self.find_scope_start(l:start)
+        let l:main_msgs = self.build_messages(l:thread_start, l:start)
 
-        if l:kind ==# 'thread'
-            let l:main_msgs = self.build_thread_messages(l:scope_start, l:start)
-        else
-            let l:main_msgs = self.build_input_messages(l:start, l:region_end)
-        endif
-
-        if type(l:main_msgs) != type([])
+        if type(l:main_msgs) != type([]) || empty(l:main_msgs)
             return
         endif
 
-        call self.status('collecting context...')
-        let [l:ctx_system, l:ctx_resources] = self.build_context_messages(l:scope_start, l:region_end, l:model)
-
-        if l:kind ==# 'thread'
-            if len(l:main_msgs) > 1
-                let l:history  = l:main_msgs[0 : len(l:main_msgs) - 2]
-                let l:cur_user = l:main_msgs[-1]
-            else
-                let l:history  = []
-                let l:cur_user = l:main_msgs[0]
-            endif
-            let l:msgs = l:ctx_system + l:history + l:ctx_resources + [l:cur_user]
-        else
-            let l:msgs = l:ctx_system + l:ctx_resources + l:main_msgs
+        let l:context_name = l:marker_params.context
+        if empty(l:context_name) && l:kind ==# 'continue'
+            let l:input_params = self.parse_marker(l:thread_start)
+            let l:context_name = l:input_params.context
         endif
+
+        call self.status('collecting context...')
+        let [l:ctx_system, l:ctx_resources] = self.build_context_messages(l:context_name, l:model)
+
+        if len(l:main_msgs) > 1
+            let l:history  = l:main_msgs[0 : len(l:main_msgs) - 2]
+            let l:cur_user = l:main_msgs[-1]
+        else
+            let l:history  = []
+            let l:cur_user = l:main_msgs[0]
+        endif
+        let l:msgs = l:ctx_system + l:history + l:ctx_resources + [l:cur_user]
 
         let l:payload = json_encode({
             \ 'model': l:model,
@@ -177,157 +182,63 @@ function! s:__ai__()
         call job_start(l:cmd, l:opts)
     endfunction 
 
-    function! l:ai.resolve_model(marker_lnum, explicit_model) dict
+    function! l:ai.resolve_model(marker_lnum, explicit_model, marker_params) dict
         if !empty(a:explicit_model)
             let l:target = a:explicit_model
             return has_key(s:ai_models, l:target) ? s:ai_models[l:target] : l:target
         endif
 
-        let l:line = getline(a:marker_lnum)
-        let l:is_thread = l:line =~# '^>>> thread\>'
-
-        let l:m = matchlist(l:line, '^>>> \%(input\|thread\)\s\+\(\S\+\)')
-        if !empty(l:m)
-            let l:name = l:m[1]
-            if has_key(s:ai_models, l:name)
-                return s:ai_models[l:name]
+        let l:name = a:marker_params.model
+        if empty(l:name) && a:marker_params.kind ==# 'continue'
+            let l:thread_start = search('^>>> input\>', 'bnW', 0)
+            if l:thread_start > 0
+                let l:input_params = self.parse_marker(l:thread_start)
+                let l:name = l:input_params.model
             endif
-            if exists('g:ai_models') && type(g:ai_models) == type({}) && has_key(g:ai_models, l:name)
-                return g:ai_models[l:name]
-            endif
-            return l:name
         endif
 
-        if l:is_thread
-            let l:save_pos = getpos('.')
-            call cursor(a:marker_lnum, 1)
-            let l:prev_end = search('^>>> end$', 'bnW')
-            call setpos('.', l:save_pos)
-
-            if l:prev_end == 0
-                let l:start = 1
-            else
-                let l:start = l:prev_end + 1
-            endif
-
-            let l:lnum = a:marker_lnum - 1
-            while l:lnum >= l:start
-                let l:l = getline(l:lnum)
-                let l:m2 = matchlist(l:l, '^>>> thread\>\s\+\(\S\+\)')
-                if !empty(l:m2)
-                    let l:name = l:m2[1]
-                    if has_key(s:ai_models, l:name)
-                        return s:ai_models[l:name]
-                    endif
-                    if exists('g:ai_models') && type(g:ai_models) == type({}) && has_key(g:ai_models, l:name)
-                        return g:ai_models[l:name]
-                    endif
-                    return l:name
-                endif
-                let l:lnum -= 1
-            endwhile
+        if empty(l:name)
+            let l:name = 'google/gemini-2.5-flash'
         endif
 
-        echoerr "AI: No model specified (neither in marker, previous thread, nor as argument)"
-        return ''
+        if has_key(s:ai_models, l:name)
+            return s:ai_models[l:name]
+        endif
+        if exists('g:ai_models') && type(g:ai_models) == type({}) && has_key(g:ai_models, l:name)
+            return g:ai_models[l:name]
+        endif
+        return l:name
     endfunction
 
     function! l:ai.find_region_end(start_lnum) dict
         let l:save_pos = getpos('.')
         call cursor(a:start_lnum, 1)
-        let l:next_input  = search('^>>> input\>',  'nW')
-        let l:next_thread = search('^>>> thread\>', 'nW')
-        let l:next_end    = search('^>>> end$',     'nW')
+        let l:next_input    = search('^>>> input\>',  'nW')
+        let l:next_continue = search('^>>> continue\>', 'nW')
         call setpos('.', l:save_pos)
 
-        let l:cands = filter([l:next_input, l:next_thread, l:next_end], 'v:val > 0')
+        let l:cands = filter([l:next_input, l:next_continue], 'v:val > 0')
         if empty(l:cands)
             return line('$')
         endif
         return min(l:cands) - 1
     endfunction
 
-    function! l:ai.find_scope_start(marker_lnum) dict
-        let l:save_pos = getpos('.')
-        call cursor(a:marker_lnum, 1)
-        let l:prev_end    = search('^>>> end$',     'bnW')
-        let l:prev_forget = search('^>>> forget\>', 'bnW')
-        call setpos('.', l:save_pos)
-
-        let l:start = 1
-        if l:prev_end > 0
-            let l:start = l:prev_end + 1
-        endif
-        if l:prev_forget > 0 && l:prev_forget >= l:start
-            let l:start = l:prev_forget + 1
-        endif
-        return l:start
-    endfunction
-
-    function! l:ai.build_input_messages(start_lnum, region_end) dict
-        let l:out = 0
-        for lnum in range(a:start_lnum + 1, a:region_end)
-            if getline(lnum) =~# '^>>> output\>'
-                let l:out = lnum
-                break
-            endif
-        endfor
-
-        if l:out > 0
-            let l:input_end = l:out - 1
-        else
-            let l:input_end = a:region_end
-        endif
-
-        if l:input_end < a:start_lnum + 1
-            echoerr "AI: No content after '>>> input'"
-            return 0
-        endif
-
-        let l:lines = getline(a:start_lnum + 1, l:input_end)
-
-        let l:ctx = []
-        for l:line in l:lines
-            let l:m = matchlist(l:line, '^>>> \S\+\s*\(.*\)$')
-            if !empty(l:m)
-                call add(l:ctx, l:m[1])
-            else
-                call add(l:ctx, l:line)
-            endif
-        endfor
-
-        let l:input_text = join(l:ctx, "\n")
-        if empty(trim(l:input_text))
-            echoerr "AI: Empty input block"
-            return 0
-        endif
-
-        return [ {'role': 'user', 'content': l:input_text} ]
-    endfunction
-
-    function! l:ai.build_thread_messages(scope_start_lnum, last_thread_lnum) dict
-        let l:start = a:scope_start_lnum
+    function! l:ai.build_messages(input_lnum, last_continue_lnum) dict
+        let l:start = a:input_lnum
         let l:last  = line('$')
         let l:lines = getline(l:start, l:last)
         let l:n     = len(l:lines)
-        let l:rel_last_thread = a:last_thread_lnum - l:start
+        let l:rel_last_continue = a:last_continue_lnum - l:start
 
         let l:msgs = []
         let l:i = 0
         let l:cur_idx = -1
 
         while l:i < l:n
-            if l:lines[l:i] =~# '^>>> input\>'
-                let l:k = l:i + 1
-                while l:k < l:n && l:lines[l:k] !~ '^>>> '
-                    let l:k += 1
-                endwhile
-                let l:i = l:k
-                continue
-            endif
-
-            if l:lines[l:i] =~# '^>>> thread\>'
-                if l:i == l:rel_last_thread
+            let l:line = l:lines[l:i]
+            if l:line =~# '^>>> input\>' || l:line =~# '^>>> continue\>'
+                if l:i == l:rel_last_continue
                     let l:cur_idx = l:i
                     break
                 endif
@@ -382,7 +293,7 @@ function! s:__ai__()
         endwhile
 
         if l:cur_idx == -1
-            echoerr "AI: Internal error locating current thread block"
+            echoerr "AI: Internal error locating current block"
             return 0
         endif
 
@@ -394,14 +305,13 @@ function! s:__ai__()
         let l:user_end = l:j - 1
 
         if l:user_start > l:user_end
-            echoerr "AI: No content after '>>> thread'"
+            echoerr "AI: No content after block marker"
             return 0
         endif
 
-        let l:cur_input_lines = l:lines[l:user_start : l:user_end]
-        let l:input_text = join(l:cur_input_lines, "\n")
+        let l:input_text = join(l:lines[l:user_start : l:user_end], "\n")
         if empty(trim(l:input_text))
-            echoerr "AI: Empty thread input block"
+            echoerr "AI: Empty input/continue block"
             return 0
         endif
 
@@ -409,34 +319,36 @@ function! s:__ai__()
         return l:msgs
     endfunction
 
-    function! l:ai.build_context_messages(scope_start_lnum, scope_end_lnum, model) dict
+    function! l:ai.build_context_messages(context_name, model) dict
         let l:system_msgs   = []
         let l:resource_msgs = []
-
-        let l:ignore = []
-        if exists('g:ai_ignore') && type(g:ai_ignore) == type([])
-            let l:ignore = copy(g:ai_ignore)
+        if empty(a:context_name)
+            return [l:system_msgs, l:resource_msgs]
         endif
 
+        let l:ignore = exists('g:ai_ignore') ? copy(g:ai_ignore) : []
         let l:seen_files = {}
         let l:seen_urls  = {}
-
         let l:supports_images = self.model_supports_images(a:model)
 
-        let l:lnum = a:scope_start_lnum
-        while l:lnum <= a:scope_end_lnum
-            let l:line = getline(l:lnum)
+        let l:lnum = 1
+        let l:last = line('$')
 
-            if l:line =~# '^>>> context\>'
+        while l:lnum <= l:last
+            let l:line = getline(l:lnum)
+            let l:m_ctx = matchlist(l:line, '^>>> context\s\+\(\S\+\)')
+            
+            if !empty(l:m_ctx) && l:m_ctx[1] ==# a:context_name
                 let l:ctx_lnum = l:lnum + 1
-                while l:ctx_lnum <= a:scope_end_lnum && getline(l:ctx_lnum) !~# '^>>> '
+                while l:ctx_lnum <= l:last && getline(l:ctx_lnum) !~# '^>>> '
                     let l:ctxline = trim(getline(l:ctx_lnum))
                     if l:ctxline ==# ''
                         let l:ctx_lnum += 1
                         continue
                     endif
 
-                    let l:m = matchlist(l:ctxline, '^\(\w\+\)\s*:\s*\(.*\)$')
+                    " Now expects @kind: path (e.g. @dir: ..., @file: ...)
+                    let l:m = matchlist(l:ctxline, '^@\(\w\+\)\s*:\s*\(.*\)$')
                     if empty(l:m)
                         let l:ctx_lnum += 1
                         continue
@@ -449,12 +361,10 @@ function! s:__ai__()
                         if !empty(l:val)
                             call add(l:ignore, l:val)
                         endif
-
                     elseif l:kind ==# 'role'
                         if !empty(l:val)
                             call add(l:system_msgs, {'role': 'system', 'content': l:val})
                         endif
-
                     elseif l:kind ==# 'file'
                         let l:path = self.normalize_path(l:val)
                         if !empty(l:path) && filereadable(l:path)
@@ -464,10 +374,9 @@ function! s:__ai__()
                                 let l:msg = self.make_file_message(l:path, l:supports_images)
                                 if type(l:msg) == type({})
                                     call add(l:resource_msgs, l:msg)
-                                Hon endif
+                                endif
                             endif
                         endif
-
                     elseif l:kind ==# 'dir'
                         let l:dir = self.normalize_path(l:val)
                         if !empty(l:dir) && isdirectory(l:dir)
@@ -482,7 +391,6 @@ function! s:__ai__()
                                 endif
                             endfor
                         endif
-
                     elseif l:kind ==# 'url'
                         let l:url = l:val
                         if !empty(l:url) && !has_key(l:seen_urls, l:url)
@@ -658,11 +566,8 @@ function! s:__ai__()
         endif
 
         let l:content =
-            \ "You are given an offline snapshot of the content of this URL:\n" .
-            \ a:url . "\n\n" .
-            \ "Use ONLY the content below as the page content when answering " .
-            \ "questions about this website. Do NOT say that you cannot browse " .
-            \ "the internet; you already have the page content.\n\n" .
+            \ "You are given an offline snapshot of the content of this URL:\n" . \ a:url . "\n\n" .
+            \ "Use ONLY the content below as the page content when answering " . \ "questions about this website. Do NOT say that you cannot browse " . \ "the internet; you already have the page content.\n\n" .
             \ "----- BEGIN PAGE CONTENT -----\n" .
             \ l:body . "\n" .
             \ "----- END PAGE CONTENT -----"
@@ -694,7 +599,6 @@ function! s:__ai__()
         try
             let l:res = json_decode(l:joined)
         catch
-            " Show raw API error output if curl fails to return JSON (helps debug proxies/gateways)
             echoerr "AI API/HTTP Error: " . substitute(strpart(l:joined, 0, 200), '\n', ' ', 'g')
             return
         endtry
@@ -722,8 +626,8 @@ function! s:__ai__()
         let l:curbuf = bufnr('%')
         execute 'keepalt buffer' l:buf
 
-        if a:kind ==# 'thread'
-            let l:marker_pat = '^>>> thread\>'
+        if a:kind ==# 'continue'
+            let l:marker_pat = '^>>> continue\>'
         else
             let l:marker_pat = '^>>> input\>'
         endif
@@ -737,20 +641,23 @@ function! s:__ai__()
             return
         endif
 
-        let l:orig_line = getline(l:start)
-        let l:model_suffix = matchstr(l:orig_line, '^>>> \%(input\|thread\)\s\+\zs.*$')
-        if empty(trim(l:model_suffix))
-            let l:model_suffix = a:model
+        let l:orig_params = self.parse_marker(l:start)
+        let l:followup_marker = '>>> continue'
+        if !empty(l:orig_params.context)
+            let l:followup_marker .= ' context=' . l:orig_params.context
+        endif
+        if !empty(l:orig_params.model)
+            let l:followup_marker .= ' model=' . l:orig_params.model
         endif
 
         let l:save_pos = getpos('.')
         call cursor(l:start, 1)
-        let l:next_input  = search('^>>> input\>',  'nW')
-        let l:next_thread = search('^>>> thread\>', 'nW')
-        let l:next_end    = search('^>>> end$',     'nW')
+
+        let l:next_input    = search('^>>> input\>',  'nW')
+        let l:next_continue = search('^>>> continue\>', 'nW')
         call setpos('.', l:save_pos)
 
-        let l:cands = filter([l:next_input, l:next_thread, l:next_end], 'v:val > 0')
+        let l:cands = filter([l:next_input, l:next_continue], 'v:val > 0')
         if empty(l:cands)
             let l:region_end = line('$')
         else
@@ -785,8 +692,6 @@ function! s:__ai__()
 
         let l:total_added_lines = 3 + len(l:lines_to_insert)
         let l:end_of_output_lnum = l:insert_lnum + l:total_added_lines
-
-        let l:followup_marker = '>>> ' . a:kind . ' ' . l:model_suffix
 
         call append(l:end_of_output_lnum, '')
         call append(l:end_of_output_lnum + 1, l:followup_marker)

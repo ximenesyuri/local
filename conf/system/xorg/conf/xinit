@@ -13,7 +13,7 @@
     xset r rate 130 35
 # fixing touchpad
    touchpad=$(xinput list --id-only "SYNA3602:00 0911:5288 Touchpad")
-   xinput set-prop $touchpad "libinput Tapping Button Mapping Enabled" 0 1 
+   xinput set-prop $touchpad "libinput Tapping Button Mapping Enabled" 1 0 
 # disabling ipv6
     sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1
     sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1

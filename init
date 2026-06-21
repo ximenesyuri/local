@@ -58,7 +58,8 @@ __func() {
 }
 
 __tools() {
-    source ~/etc/dev/__old/sh/py/py 
+    source ~/etc/dev/__old/sh/py/py
+    source ~/local/bash/bash.ignore
 }
 
 __sec() {

@@ -50,12 +50,12 @@
     inoremap <end> <esc>ggi
     inoremap <end> <esc>GGi 
 "> use cursor arrows to move through long lines, ignoring wrapping.
-    inoremap <silent> <down> <c-r>=pumvisible() ? "\<lt>down>" : "\<lt>c-o>gj"<cr>
-    inoremap <silent> <up> <c-r>=pumvisible() ? "\<lt>up>" : "\<lt>c-o>gk"<cr>
-    nnoremap <expr> <up> (v:count == 0 ? 'gk' : 'k')
+    inoremap <expr> <down> pumvisible() ? "\<down>" : "\<C-\>\<C-O>gj"
+    inoremap <expr> <up>   pumvisible() ? "\<up>"   : "\<C-\>\<C-O>gk"
+    nnoremap <expr> <up>   (v:count == 0 ? 'gk' : 'k')
     nnoremap <expr> <down> (v:count == 0 ? 'gj' : 'j')            
-    vnoremap <up> gk
-    vnoremap <down> gj
+    vnoremap <expr> <up>   (v:count == 0 ? 'gk' : 'k')
+    vnoremap <expr> <down> (v:count == 0 ? 'gj' : 'j')
 
 " SEARCHING
 "> 'ctrl+f' to search.

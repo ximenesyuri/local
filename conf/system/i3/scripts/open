@@ -19,7 +19,7 @@ if [[ "${CLASS,,}" == *"term"* ]]; then
 fi
 
 if [ $IS_VIM -eq 1 ]; then
-    xdotool key --window $WID ctrl+o
+    xdotool key --window $WID alt+o
 elif [[ "${CLASS,,}" == *"term"* ]]; then
     URL=$(xclip -o -sel primary 2>/dev/null | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
     if [[ -z "$URL" ]]; then
@@ -29,5 +29,5 @@ elif [[ "${CLASS,,}" == *"term"* ]]; then
         firefox "$URL" &
     fi
 else
-    xdotool key --window $WID ctrl+o
+    xdotool key --window $WID alt+o
 fi

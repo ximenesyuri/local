@@ -22,7 +22,7 @@ elif [[ "${CLASS,,}" == *"term"* ]]; then
 fi
 
 if [ $IS_VIM -eq 1 ]; then
-    xdotool key --window $WID ctrl+e
+    xdotool key --window $WID alt+e
 else
     TMPFILE=$(mktemp /tmp/notes_XXXXXX.md)
     i3-msg split h

@@ -12,67 +12,71 @@ KEY BINDING
 Inside any `.ai` file, use `<Ctrl + g>` (in normal or insert mode) to 
 trigger the AI to process the current block.
 
-1. BASIC QUERIES (>>> input)
-----------------------------
-Use the `>>> input` marker to ask a standalone question. You can optionally 
-append the model name right after the marker.
+1. BASIC QUERIES & STARTING THREADS (>>> input)
+-----------------------------------------------
+Use the `>>> input` marker to ask a standalone question or start a new 
+conversation thread. You can optionally specify the model and a context 
+name right after the marker using `model=` and `context=`.
 
-    >>> input claude-3
+    >>> input model=claude-3
     Write a python function to reverse a string.
 
 Press `<C-g>`. The plugin will fetch the text, send it to the model, and 
 automatically insert the response below a `>>> output` marker.
 
-2. CONVERSATIONS (>>> thread)
------------------------------
-If you want the model to remember previous turns in the current scope, use 
-`>>> thread` instead of `input`.
+2. CONVERSATIONS (>>> continue)
+-------------------------------
+To continue an existing conversation (so the model remembers previous turns), 
+the plugin uses the `>>> continue` marker. 
 
-    >>> thread gpt-4o
+When you generate a response from an `>>> input`, the plugin will automatically 
+append a `>>> continue` marker for you to easily ask follow-up questions.
+
+    >>> input model=gpt-4o
     What is the capital of France?
 
     >>> output by gpt-4o
     The capital of France is Paris.
 
-    >>> thread
+    >>> continue model=gpt-4o
     And what is its population?
 
-Running `<C-g>` on the last thread sends the entire conversation history 
-(up to the previous `>>> end` or `>>> forget` markers) so the model has 
-the full context.
+Running `<C-g>` on the `continue` block sends the entire conversation history 
+(starting from the root `>>> input`) so the model has the full context. If you 
+want to start a brand new conversation, just type `>>> input` again.
 
 3. PROVIDING CONTEXT (>>> context)
 ----------------------------------
 You can feed files, entire directories, URLs, or system instructions into 
-the model's context. Place a `>>> context` marker and list your resources 
-below it.
+the model's context. Contexts are now *named*, allowing you to define multiple 
+contexts in a single file and reference them in your inputs. Context attributes 
+must be prefixed with an `@`.
 
-    >>> context
-    role: You are an expert code reviewer.
-    file: src/main.py
-    dir: src/utils/
-    url: https://docs.python.org/3/library/json.html
-    ignore: *.pyc
+    >>> context my_project
+    @role: You are an expert code reviewer.
+    @file: src/main.py
+    @dir: src/utils/
+    @url: https://docs.python.org/3/library/json.html
+    @ignore: *.pyc
 
-    >>> input
+    >>> input context=my_project model=gpt-4o
     Review the code provided in the context and suggest improvements.
 
-Available context keys:
-  role:   Sets the system prompt/behavior.
-  file:   Reads a local file (supports images if the model has vision).
-  dir:    Reads all files in a directory.
-  url:    Fetches the raw HTML/text of a webpage to pass to the model.
-  ignore: Adds a glob pattern to skip certain files (useful with `dir:`).
+Available context attributes:
+  @role:   Sets the system prompt/behavior.
+  @file:   Reads a local file (supports images if the model has vision).
+  @dir:    Reads all files in a directory.
+  @url:    Fetches the raw HTML/text of a webpage to pass to the model.
+  @ignore: Adds a glob pattern to skip certain files (useful with `@dir:`).
 
-4. SCOPE MANAGEMENT (>>> end / >>> forget)
-------------------------------------------
-Because ai.vim scans upwards to build the thread history and context, you 
-can isolate multiple different conversations in the same file.
+4. SCOPE MANAGEMENT
+-------------------
+Because ai.vim scopes interactions between markers, you can isolate multiple 
+different conversations in the same file without needing explicit end markers.
 
-  >>> end    : Completely ends the current context and conversation thread. 
-               Anything below this acts as a fresh slate.
-  >>> forget : Clears the conversation history (thread) but retains the 
-               active `>>> context` definitions above it.
+  >>> input : Always starts a brand new conversation thread. The active scope 
+              for a thread continues downwards until the end of the file or 
+              until the very next `>>> input` marker is encountered.
 
 5. CONFIGURATION VARIABLES
 --------------------------

@@ -8,9 +8,10 @@ function! s:__lsp__(auto, snips)
         inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<tab>"
         inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
         inoremap <expr> <CR> pumvisible() ? (complete_info()['selected'] != -1 ? "\<C-y>" : "\<C-n>\<C-y>") : "\<CR>"
+        inoremap <expr> ; pumvisible() ? "\<C-y>\<C-e>" : ";"
         inoremap <expr> <Space> pumvisible() ? "\<C-y>\<space>" : "\<Space>"
-        inoremap <expr> <Down> pumvisible() ? "\<C-e>\<Down>" : "\<Down>"
-        inoremap <expr> <Up> pumvisible() ? "\<C-e>\<Up>" : "\<Up>"
+        inoremap <expr> <Down> pumvisible() ? "\<C-e>\<Down>" : "\<C-\>\<C-O>gj"
+        inoremap <expr> <Up> pumvisible() ? "\<C-e>\<Up>" : "\<C-\>\<C-O>gk"
         inoremap <expr> <Left> pumvisible() ? "\<C-e>\<Left>" : "\<Left>"
         inoremap <expr> <Right> pumvisible() ? "\<C-e>\<Right>" : "\<Right>"
 

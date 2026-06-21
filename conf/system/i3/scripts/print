@@ -37,5 +37,5 @@ if [[ "${CLASS,,}" == *"term"* ]] && [ $IS_VIM -eq 0 ]; then
     fi
 
 else
-    xdotool key --window $WID ctrl+p
+    xdotool key --window $WID alt+p
 fi
