@@ -1,7 +1,7 @@
 HERE    := $(ENV_PATH)/conf/tools/vim
 CONF    := $(HERE)/conf
 SCRIPTS := $(CONF)/scripts
-OTHER   := $(CONF)/others
+OTHER   := $(CONF)/other
 VIM     := $(HOME)/.vim
 PACK    := $(VIM)/pack/local/start
 
