@@ -1,8 +1,3 @@
-" File:       essence.vim
-" Maintainer: Yuri Ximenes Martins <yx@yx.dev.br>
-" Modified:   2024-05-09
-" License:    MIT
-
 hi clear
 if exists('syntax_on')
   syntax reset
@@ -82,10 +77,10 @@ let s:dark2 = '#0f0f0f'
     hi ErrorMsg ctermbg=8 ctermfg=1
     hi WarningMsg ctermbg=8 ctermfg=1
 "> Spell
-    hi SpellBad ctermbg=6 ctermfg=0
-    hi SpellCap ctermbg=13 ctermfg=0
-    hi SpellLocal ctermbg=13 ctermfg=0
-    hi SpellRare ctermbg=4 ctermfg=0
+    hi SpellBad cterm=underline ctermbg=NONE ctermfg=6
+    hi SpellCap cterm=NONE ctermbg=NONE ctermfg=NONE
+    hi SpellLocal cterm=NONE ctermbg=NONE ctermfg=NONE
+    hi SpellRare cterm=underline ctermbg=NONE ctermfg=4
 "> Cursor
     hi ColorColumn cterm=NONE ctermbg=8 ctermfg=NONE
     hi CursorColumn cterm=NONE ctermbg=8 ctermfg=NONE
@@ -212,69 +207,6 @@ hi! link xmlTag Statement
 hi! link xmlTagName Statement
 
 " YAML
-
 hi! link yamlKeyValueDelimiter Delimiter
-
 hi! link deniteMatched NormalFg
 hi! link deniteMatchedChar Title
-
-" TEX (Vimtex Syntax
-"> General Delimiters
-    hi! texDelim ctermfg=14
-"> Commands
-    hi! texCmd ctermfg=12
-    hi! texOpt ctermfg=4
-    hi! texArg ctermfg=5
-"> Document Class
-    hi! texCmdClass ctermfg=5
-"> Packages
-    hi! texCmdPackage ctermfg=5
-"> Includes
-    hi! texCmdInput ctermfg=5
-"> Newtheorem
-    hi! texCmdNewthm ctermfg=5
-"> Options
-    hi! texFileOpt ctermfg=2
-    hi! texFilesOpt ctermfg=2
-    hi! texNewthmOptCounter ctermfg=2
-"> Arguments
-    hi! texFileArg ctermfg=12
-    hi! texFilesArg ctermfg=12
-    hi! texNewthmArgName ctermfg=12
-    hi! texNewthmArgPrinted ctermfg=14
-"> Title
-    hi! texCmdTitle ctermfg=5
-    hi! texTitleArg ctermfg=12
-"> Author
-    hi! texCmdAuthor ctermfg=5
-    hi! texAuthorOpt ctermfg=2
-    hi! texAuthorArg ctermfg=12
-"> Sections
-    hi! texCmdPart ctermfg=4
-    hi! texPartArgTitle ctermfg=9
-"> Environments
-    hi! texCmdEnv ctermfg=4
-    hi! texEnvArgName ctermfg=2
-    hi! texCmdItem ctermfg=5
-"> References
-    hi! texCmdRef ctermfg=5
-    hi! texRefArg ctermfg=13
-"> Math Delimiters
-    hi! texMathDelimZone ctermfg=14
-    hi! texMathZoneLI ctermfg=14
-    hi! texMathZoneLD ctermfg=14
-    hi! texMathZoneTI ctermfg=14
-    hi! texMathZoneTD ctermfg=14
-"> Equation Env
-    hi! texCmdMathEnv ctermfg=4
-    hi! texMathEnvArgName ctermfg=2
-    hi! texMathZoneEnv ctermfg=14
-    hi! texMathZone ctermfg=12
-"> Operators
-    hi! texMathOper ctermfg=14
-    hi! texMathSub ctermfg=14
-    hi! texMathSuper ctermfg=14
-    hi! texMathSuperSub ctermfg=14
-"> Tikzcd
-"> Error
-    hi! texMathError ctermfg=0 ctermbg=9
