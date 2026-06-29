@@ -17,7 +17,7 @@ __SPELL__  := $(VIM)/spell
 __SNIPS__  := $(VIM)/snips
 __INIT__   := $(VIM)/vimrc
 
-PACKAGES = yegappan/lsp
+PACKAGES = yegappan/lsp SirVer/ultisnips
 
 include $(ENV_PATH)/helper/helper.mk
 

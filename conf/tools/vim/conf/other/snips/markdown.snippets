@@ -42,19 +42,46 @@ $0
 \`\`\`
 endsnippet
 
+snippet --- "frontmatter"
+---
+title: $0
+---
+endsnippet
+
 snippet toc "toc" w
-\`\`\`{toc}
-\`\`\`
+{{ toc }}
 endsnippet
 
-snippet toc-dir "toc" w
-\`\`\`{toc-dir}
-\`\`\`
+snippet files "toc" w
+{{ files }}
 endsnippet
 
-snippet title "toc" w
-\`\`\`{title}
-\`\`\`
+snippet def "def"
+{{def:${1:contexto}.${2:termo}:${2:termo}}}
+endsnippet
+
+snippet block.def "block.def" w
+{{ block.def }}
+:: term: $0
+:: context:
+:: idea:
+:: details:
+:: related:
+{{ block.end }}
+endsnippet
+
+snippet block.table "table" w
+{{ block.table }}
+$0
+-------------------------------
+{{ block.end }}
+endsnippet
+
+snippet block.diagram "diagram" w
+{{ block.diagram }}
+node:
+arrow: 
+{{ block.end }}
 endsnippet
 
 # HYPERLINK
@@ -64,151 +91,6 @@ endsnippet
 
 snippet [# "internal reference" w
 [${1:label}](#${2:header})
-endsnippet
-
-snippet [[ "hyperlink" w
-[[${1:url}|${2:label}]]
-endsnippet
-
-snippet ( "internal label" w
-(${1:label})=$0
-endsnippet
-
-# OTHER
-snippet table "table" w
-(table-${1:number})=
-\`\`\`
-${2:title} $0
------------------------------
-
------------------------------
-table $1
-\`\`\`
-endsnippet
-snippet tab "table" w
-(table-${1:number})=
-\`\`\`
-${2:title} $0
------------------------------
-
------------------------------
-table $1
-\`\`\`
-endsnippet
-
-snippet diagram "diagram" w
-(diagram-${1:number})=
-\`\`\`
-$0
------------------------------
-diagram $1
-\`\`\`
-endsnippet
-snippet diag "diagram" w
-(diagram-${1:number})=
-\`\`\`
-$0
-
------------------------------
-diagram $1
-\`\`\`
-endsnippet
-
-snippet definition "definition" w
-(def-${1:number})=
-> [Definition $1](#def-$1). $0
-endsnippet
-
-snippet def "definition" w
-(def-${1:number})=
-> [Definition $1](#def-$1). $0
-endsnippet
-
-snippet obs "obs" w
-(obs-${1:number})=
-> [Observação $1](#obs-$1). $0
-endsnippet
-
-snippet rem "remark" w
-(rem-${1:number})=
-> [Remark $1](#rem-$1). $0
-endsnippet
-
-snippet remark "remark" w
-(rem-${1:number})=
-> [Remark $1](#rem-$1). $0
-endsnippet
-
-snippet prop "proposition" w
-(prop-${1:number})=
-> [Proposition $1](#prop-$1). $0
-endsnippet
-
-snippet thm "theorem" w
-(thm-${1:number})=
-> [Theorem $1](#thm-$1). $0
-endsnippet
-
-snippet cor "corollary" w
-(cor-${1:number})=
-> [Corollary $1](#cor-$1). $0
-endsnippet
-
-snippet lem "lem" w
-(lem-${1:number})=
-> [Lemma $1](#lem-$1). $0
-endsnippet
-
-snippet proof "proof" w
-(proof-${1:number})=
-> [Proof](#proof-$1). $0
-endsnippet
-
-snippet axiom "axiom" w
-(axiom-${1:number})=
-> [Axiom $1](#axiom-$1). $0
-endsnippet
-
-snippet hyp "hyp" w
-(hyp-${1:number})=
-> [Hypothesis $1](#hyp-$1). $0
-endsnippet
-
-snippet notation "notation" w
-(notation-${1:number})=
-> [Notation](#notation-$1). $0
-endsnippet
-
-snippet example "example" w
-(example-${1:number})=
-> [Example $1](#example-$1). $0
-endsnippet
-
-snippet exercise "exercise" w
-(exercise-${1:number})=
-> [Exercise $1](#exercise-$1). $0
-endsnippet
-
-# GLOSSARY
-snippet item "glossary item" w
-(${1:item-id})=
-- [${2:item-title}](#$1). $0
-endsnippet
-
-snippet l "libs" w
-{l:$0}
-endsnippet
-
-snippet n "notes" w
-{n:$0}
-endsnippet
-
-snippet p "python" w
-{p:$0}
-endsnippet
-
-snippet g "glossary" w
-{g:$0}
 endsnippet
 
 # TEX

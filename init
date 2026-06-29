@@ -9,6 +9,8 @@ __prompt(){
 __export() {
     export EDITOR=vim
     export BROWSER=firefox
+    export VOR=$HOME/etc/vor
+    export DEV=$HOME/etc/dev
 }
 
 __alias() {

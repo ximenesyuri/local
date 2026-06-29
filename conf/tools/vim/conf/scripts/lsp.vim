@@ -5,8 +5,13 @@ function! s:__lsp__(auto, snips)
     let l:lsp = {}
 
     function! l:lsp.keys() dict
-        inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<tab>"
-        inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+        
+        " inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<tab>"
+        " inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+        inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<C-R>=UltiSnips#ExpandSnippetOrJump()\<CR>\<C-R>=g:SmartTab()\<CR>"
+        inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-R>=UltiSnips#JumpBackwards()\<CR>\<C-R>=g:SmartShiftTab()\<CR>"
+        
         inoremap <expr> <CR> pumvisible() ? (complete_info()['selected'] != -1 ? "\<C-y>" : "\<C-n>\<C-y>") : "\<CR>"
         inoremap <expr> ; pumvisible() ? "\<C-y>\<C-e>" : ";"
         inoremap <expr> <Space> pumvisible() ? "\<C-y>\<space>" : "\<Space>"
