@@ -1,3 +1,35 @@
+function! g:SmartTab()
+    " If completion menu is open, queue a Ctrl+n (Next)
+    if pumvisible()
+        call feedkeys("\<C-n>", "n")
+        return ""
+    endif
+    
+    " Try to expand or jump in an UltiSnips snippet
+    call UltiSnips#ExpandSnippetOrJump()
+    if get(g:, 'ulti_expand_or_jump_res', 0) == 0
+        " If no snippet, queue a literal, native Tab
+        call feedkeys("\<Tab>", "n")
+    endif
+    return ""
+endfunction
+
+function! g:SmartShiftTab()
+    " If completion menu is open, queue a Ctrl+p (Previous)
+    if pumvisible()
+        call feedkeys("\<C-p>", "n")
+        return ""
+    endif
+    
+    " Try to jump backwards in a snippet
+    call UltiSnips#JumpBackwards()
+    if get(g:, 'ulti_jump_backwards_res', 0) == 0
+        " If no snippet, queue a literal, native Shift-Tab
+        call feedkeys("\<S-Tab>", "n")
+    endif
+    return ""
+endfunction
+
 let s:ALLOW_AUTOCOMPLETE = v:true
 let s:ALLOW_SNIPPETS = v:true
 
@@ -5,15 +37,11 @@ function! s:__lsp__(auto, snips)
     let l:lsp = {}
 
     function! l:lsp.keys() dict
-        
-        " inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<tab>"
-        " inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-        inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<C-R>=UltiSnips#ExpandSnippetOrJump()\<CR>\<C-R>=g:SmartTab()\<CR>"
-        inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-R>=UltiSnips#JumpBackwards()\<CR>\<C-R>=g:SmartShiftTab()\<CR>"
+       
+        inoremap <silent> <Tab> <C-R>=g:SmartTab()<CR>
+        inoremap <silent> <S-Tab> <C-R>=g:SmartShiftTab()<CR>
         
         inoremap <expr> <CR> pumvisible() ? (complete_info()['selected'] != -1 ? "\<C-y>" : "\<C-n>\<C-y>") : "\<CR>"
-        inoremap <expr> ; pumvisible() ? "\<C-y>\<C-e>" : ";"
         inoremap <expr> <Space> pumvisible() ? "\<C-y>\<space>" : "\<Space>"
         inoremap <expr> <Down> pumvisible() ? "\<C-e>\<Down>" : "\<C-\>\<C-O>gj"
         inoremap <expr> <Up> pumvisible() ? "\<C-e>\<Up>" : "\<C-\>\<C-O>gk"

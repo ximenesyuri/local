@@ -2,6 +2,7 @@
 snippet ' "preformatted inline" b
 \`
 endsnippet
+
 snippet " "preformatted display" b 
 \`\`\`
 endsnippet
@@ -42,18 +43,31 @@ $0
 \`\`\`
 endsnippet
 
-snippet --- "frontmatter"
----
-title: $0
----
+snippet globals "frontmatter"
+{{ block.globals }}
+:: title: $0
+{{ block.end }}
+endsnippet
+
+snippet locals "frontmatter"
+{{ block.locals }}
+$0
+{{ block.end }}
 endsnippet
 
 snippet toc "toc" w
 {{ toc }}
 endsnippet
 
-snippet files "toc" w
+snippet files "files" w
 {{ files }}
+endsnippet
+
+snippet defs "defs" w
+{{ block.hide }}
+:: title: [ definições ]
+:: hide: {{ list.defs }}
+{{ block.end }}
 endsnippet
 
 snippet def "def"
