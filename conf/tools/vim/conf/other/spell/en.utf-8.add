@@ -841,3 +841,5 @@ LazyTyped
 LazyCondition
 LazyFamily
 LazyConstructor
+LSP
+metaclasses
