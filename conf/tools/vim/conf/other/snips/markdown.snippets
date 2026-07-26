@@ -43,6 +43,7 @@ $0
 \`\`\`
 endsnippet
 
+# VARS
 snippet globals "frontmatter"
 {{ block.globals }}
 :: title: $0
@@ -63,39 +64,115 @@ snippet files "files" w
 {{ files }}
 endsnippet
 
-snippet defs "defs" w
+# LIST
+snippet list.defs "defs" w
 {{ block.hide }}
 :: title: [ definições ]
 :: hide: {{ list.defs }}
 {{ block.end }}
 endsnippet
 
-snippet def "def"
-{{def:${1:contexto}.${2:termo}:${2:termo}}}
-endsnippet
-
-snippet block.def "block.def" w
-{{ block.def }}
-:: term: $0
-:: context:
-:: idea:
-:: details:
-:: related:
+snippet list.types "types" w
+{{ block.hide }}
+:: title: [ types ]
+:: hide: {{ list.types }}
 {{ block.end }}
 endsnippet
 
-snippet block.table "table" w
+# BLOCKS
+snippet def "block.def"
+{{ block.def }}
+:: term: ${1:term}
+:: context: ${2:context}
+:: idea: ${3:idea}
+:: details: ${4:details}
+:: __refs__: ${5:refs}
+{{ block.end }}
+endsnippet
+
+snippet type "block.type"
+{{ block.type }}
+:: __entity__: ${1:entity}
+:: __context__: ${2:context}
+:: type: ${3:type}
+:: typesystem: ${3:typesystem}
+:: meta: ${3:meta}
+:: isterm: ${4:isterm}
+:: issub: ${4:issub}
+:: __refs__: ${5:refs}
+{{ block.end }}
+endsnippet
+
+snippet meta "block.meta"
+{{ block.meta }}
+:: __entity__: ${1:entity}
+:: __context__: ${2:context}
+:: meta: ${3:meta}
+:: typesystem: ${3:typesystem}
+:: isterm: ${4:isterm}
+:: issub: ${4:issub}
+:: __refs__: ${5:refs}
+{{ block.end }}
+endsnippet
+
+snippet table "table" w
 {{ block.table }}
 $0
--------------------------------
 {{ block.end }}
 endsnippet
 
-snippet block.diagram "diagram" w
+snippet diagram "diagram" w
 {{ block.diagram }}
 node:
 arrow: 
 {{ block.end }}
+endsnippet
+
+# REFS
+snippet ref "ref"
+{{${1:topic}:${2:contexto}.${3:entry}:${4:label}}}
+endsnippet
+
+### REFS.DEF C
+snippet def.checker
+{{def:typed.checker:checker}}
+endsnippet
+
+### REFS.DEF E
+snippet def.entity
+{{def:typed.entity:entity}}
+endsnippet
+
+### REFS.DEF K
+snippet def.kind
+{{def:typed.prop:prop}}
+endsnippet
+
+### REFS.DEF M
+snippet def.member
+{{def:typed.member:member}}
+endsnippet
+
+snippet def.meta
+{{def:typed.meta:meta}}
+endsnippet
+
+### REFS.DEF P
+snippet def.prop
+{{def:typed.prop:prop}}
+endsnippet
+
+### REFS.DEF T
+snippet def.type
+{{def:typed.typed:type}}
+endsnippet
+
+snippet def.typesystem
+{{def:typed.type system:type system}}
+endsnippet
+
+snippet def.typedsystem
+{{def:typedsystem.typedsystem:typedsystem}}
 endsnippet
 
 # HYPERLINK

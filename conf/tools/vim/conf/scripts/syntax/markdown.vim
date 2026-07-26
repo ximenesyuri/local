@@ -97,7 +97,7 @@ hi link markdownArgString String
 
 hi link markdownBlockBraces Comment 
 hi link markdownBlockWord Title 
-hi markdownBlockNamespace ctermfg=2
+hi markdownBlockNamespace ctermfg=5
 hi link markdownBlockDot Comment     
 hi link markdownBlockName Type
 
