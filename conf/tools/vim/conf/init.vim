@@ -3,7 +3,7 @@ let s:__SCRIPTS = s:__HERE . '/scripts'
 let s:__OTHER   = s:__HERE . '/other'
 
 let s:GLOBALS   = ['base', 'keys', 'lsp', 'helper/remember', 'plugin/ultisnippets']
-let s:FILETYPES = ['python', 'markdown', 'ai', 'sh', 'css']
+let s:FILETYPES = ['python', 'markdown', 'ai', 'sh', 'css', 'wiki']
 
 function! s:EnableIndentLines()
     setlocal list

@@ -52,7 +52,6 @@ function ssh_set(){
 }
 
 # VORTICE
-
 function vor_1(){
     ssh_set vortice
     ssh ubuntu@201.54.9.220

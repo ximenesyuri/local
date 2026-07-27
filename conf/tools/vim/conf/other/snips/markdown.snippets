@@ -67,7 +67,7 @@ endsnippet
 # LIST
 snippet list.defs "defs" w
 {{ block.hide }}
-:: title: [ definições ]
+:: title: [ definitions ]
 :: hide: {{ list.defs }}
 {{ block.end }}
 endsnippet
@@ -133,51 +133,21 @@ snippet ref "ref"
 {{${1:topic}:${2:contexto}.${3:entry}:${4:label}}}
 endsnippet
 
-### REFS.DEF C
-snippet def.checker
-{{def:typed.checker:checker}}
+snippet "typed\.([a-zA-Z0-9_-]+)" "typed refs" r
+{{def:typed.`!p snip.rv = match.group(1)`:`!p snip.rv = match.group(1)`}}
 endsnippet
 
-### REFS.DEF E
-snippet def.entity
-{{def:typed.entity:entity}}
-endsnippet
-
-### REFS.DEF K
-snippet def.kind
-{{def:typed.prop:prop}}
-endsnippet
-
-### REFS.DEF M
-snippet def.member
-{{def:typed.member:member}}
-endsnippet
-
-snippet def.meta
-{{def:typed.meta:meta}}
-endsnippet
-
-### REFS.DEF P
-snippet def.prop
-{{def:typed.prop:prop}}
-endsnippet
-
-### REFS.DEF T
-snippet def.type
-{{def:typed.typed:type}}
-endsnippet
-
-snippet def.typesystem
-{{def:typed.type system:type system}}
-endsnippet
-
-snippet def.typedsystem
-{{def:typedsystem.typedsystem:typedsystem}}
+snippet "typedsystem\.([a-zA-Z0-9_-]+)" "typedsystem refs" r
+{{def:typedsystem.`!p snip.rv = match.group(1)`:`!p snip.rv = match.group(1)`}}
 endsnippet
 
 # HYPERLINK
 snippet [ "hyperlink" w
 [${1:label}](${2:url})
+endsnippet
+
+snippet "([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)" "github links" r
+[`!p snip.rv = match.group(1)`/`!p snip.rv = match.group(2)`](https://github.com/`!p snip.rv = match.group(1)`/`!p snip.rv = match.group(2)`)
 endsnippet
 
 snippet [# "internal reference" w

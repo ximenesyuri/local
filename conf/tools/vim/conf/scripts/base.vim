@@ -67,6 +67,6 @@
     colorscheme essence
 "> Spelling
 ">> enable spell checker in specific programming languages. setting spelling languages.
-    autocmd FileType tex,md,markdown setlocal spell
-    autocmd FileType tex,md,markdown syntax spell toplevel
+    autocmd FileType tex,md,markdown,wiki setlocal spell
+    autocmd FileType tex,md,markdown,wiki syntax spell toplevel
     set spelllang=en_us,pt_br
