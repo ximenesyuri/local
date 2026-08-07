@@ -1,11 +1,4 @@
 let s:current_dir = expand('<sfile>:p:h')
-if !exists('*SyntaxRegion') && filereadable(s:current_dir . '/../helper/syntax.vim')
-    execute 'source ' . s:current_dir . '/../helper/syntax.vim'
-endif
-
-if exists('*SyntaxRegion')
-    call SyntaxRegion('```{ft}', '```')
-endif
 
 if hlexists('wikiCode')
     syntax clear wikiCode
@@ -15,17 +8,20 @@ if hlexists('wikiCodeBlock')
 endif
 
 " italic: "_<text>_"
-syntax region wikiItalic matchgroup=wikiItalicDelim start=/_/ skip=/\\_/ end=/_/
+syntax region wikiItalic matchgroup=wikiItalicDelim start=/_/ skip=/\\_/ end=/_/ concealends
 
 " bold: "__<text>__"
-syntax region wikiBold matchgroup=wikiBoldDelim start=/__/ skip=/\\_/ end=/__/
+syntax region wikiBold matchgroup=wikiBoldDelim start=/__/ skip=/\\_/ end=/__/ concealends
 
 " delimiters: "(", ")", "'"
 syntax match wikiDelimiter /[()"']/ containedin=ALL
 
 " preformatted: "`<text>`" and "<pre>...</pre>"
-syntax region wikiCode matchgroup=wikiCodeDelim start=/`/ skip=/\\`/ end=/`/
+syntax region wikiCode matchgroup=wikiCodeDelim start=/`\@<!`\(`\)\@!/ skip=/\\`/ end=/`\@<!`\(`\)\@!/ concealends
 syntax region wikiPreBlock matchgroup=wikiHtmlBlock start=/<pre>/ end=/<\/pre>/
+
+" generic block code: "```" (without language specifier)
+syntax region wikiCodeBlock matchgroup=wikiCodeDelim start=/^\s*```\s*$/ end=/^\s*```\s*$/
 
 " marked: "==<text>=="
 syntax match wikiMarkFull /==.\{-}==/ contains=wikiMarkDelim,wikiMarkValue
@@ -34,7 +30,7 @@ syntax match wikiMarkValue /\(==\)\@<=.\{-}\ze==/ contained
 
 " underline: "++<text>++"
 syntax match wikiUnderlineFull /++.\{-}++/ contains=wikiUnderlineDelim,wikiUnderlineValue
-syntax match wikiUnderlineDelim /++/ contained
+syntax match wikiUnderlineDelim /++/ contained conceal
 syntax match wikiUnderlineValue /\(++\)\@<=.\{-}\ze++/ contained
 
 " tagged: "=<tag>=<text>=="
@@ -69,10 +65,8 @@ syntax match wikiArgValue /[^, "]\+/ contained
 syntax region wikiArgString start=/"/ skip=/\\"/ end=/"/ contained
 syntax match wikiArgSeparator /\(^\s*::.*\)\@<=,/ containedin=ALL
 
-" vars: "{{ <var> }}"
-syntax region wikiVar matchgroup=wikiBlockBraces start=/{{\ze[^:]*}}/ end=/}}/ keepend oneline containedin=ALL contains=wikiBlockWord,wikiBlockNamespace,wikiBlockName,wikiBlockDot
-
 " blocks: "{{ block.<name> }}"
+syntax match wikiBlockBraces /{{\|}}/ contained
 syntax match wikiBlockWord /[a-zA-Z0-9_-]\+/ contained
 syntax match wikiBlockNamespace /[a-zA-Z0-9_-]\+\ze\./ contained
 syntax match wikiBlockDot /\./ contained
@@ -97,11 +91,72 @@ syntax match wikiRefDelimEnd /}}/ contained conceal cchar="
 " numbers
 syntax match wikiNumber /\<\d\+\([.,]\d\+\)\?\>\([.)]\s\)\@!/ containedin=ALL
 
+
+" =====================================================================
+" BLOCKS & VARS (The Bulletproof Nextgroup Approach)
+" =====================================================================
+
+" vars: "{{ <var> }}"
+silent! syntax clear wikiVar
+syntax region wikiVar matchgroup=wikiBlockBraces start=/{{\ze[^:]*}}/ end=/}}/ keepend oneline containedin=ALL contains=wikiBlockWord,wikiBlockNamespace,wikiBlockName,wikiBlockDot
+
+" 1. Custom tag arguments (e.g. lang=python)
+syntax match wikiTagArgName /\<lang\ze=/ contained nextgroup=wikiTagArgEquals
+syntax match wikiTagArgEquals /=/ contained nextgroup=wikiTagArgValue
+syntax match wikiTagArgValue /[a-zA-Z0-9_-]\+/ contained
+
+" 2. PLAIN BLOCK
+silent! syntax clear wikiPlainBlockStart
+silent! syntax clear wikiPlainBlockBody
+syntax match wikiPlainBlockStart /^\s*{{\s*block\.plain\s*}}/ contains=wikiBlockBraces,wikiBlockWord,wikiBlockNamespace,wikiBlockName,wikiBlockDot nextgroup=wikiPlainBlockBody skipnl
+syntax region wikiPlainBlockBody start=/^/ end=/^\s*\ze{{\s*block\.end\s*}}/ contained
+
+" 3. END TAG (Safely catches ALL block.end tags left over by the regions)
+syntax match wikiBlockEnd /^\s*{{\s*block\.end\s*}}/ contains=wikiBlockBraces,wikiBlockWord,wikiBlockNamespace,wikiBlockName,wikiBlockDot
+
+" 4. NATIVE DYNAMIC CODE BLOCKS
+let s:filetypes = {
+    \ 'python': 'python',
+    \ 'js': 'javascript',
+    \ 'javascript': 'javascript',
+    \ 'html': 'html',
+    \ 'css': 'css',
+    \ 'sh': 'sh',
+    \ 'bash': 'sh',
+    \ 'json': 'json',
+    \ 'sql': 'sql',
+    \ 'php': 'php'
+    \ }
+
+for [s:marker, s:ft] in items(s:filetypes)
+    if empty(globpath(&rtp, 'syntax/' . s:ft . '.vim', 1, 1))
+        continue
+    endif
+    execute 'silent! syntax include @wikiCode_' . s:ft . ' syntax/' . s:ft . '.vim'
+    
+    " Matches the start tag, colors it, and forces the body region to start on the next line
+    execute 'syntax match wikiBlockCodeStart_' . s:ft
+        \ . ' /^\s*{{\s*block\.code\s\+lang=' . s:marker . '\s*}}/'
+        \ . ' contains=wikiBlockBraces,wikiBlockWord,wikiBlockNamespace,wikiBlockName,wikiBlockDot,wikiTagArgName,wikiTagArgEquals,wikiTagArgValue'
+        \ . ' nextgroup=wikiBlockBody_' . s:ft . ' skipnl'
+        
+    " Starts immediately on the next line, and ends exactly before the {{ block.end }} line
+    execute 'syntax region wikiBlockBody_' . s:ft
+        \ . ' start=/^/'
+        \ . ' end=/^\s*\ze{{\s*block\.end\s*}}/'
+        \ . ' contained contains=@wikiCode_' . s:ft
+endfor
+
+" =====================================================================
+
 " HIGHLIGHT
-hi WikiItalic ctermfg=2 cterm=italic
+hi WikiItalic ctermfg=2 cterm=italic,underline
 hi link WikiItalicDelim Comment
-hi WikiBold ctermfg=2 cterm=Bold
+hi WikiBold ctermfg=2 cterm=bold,underline
 hi link WikiBoldDelim Comment
+hi link wikiCodeDelim Comment
+hi wikiCode ctermfg=13 cterm=underline
+hi link wikiCodeBlock Code
 
 hi link WikiDelimiter Delimiter
 hi link WikiNumber Constant
@@ -109,16 +164,15 @@ hi link WikiNumber Constant
 hi wikiLinkUrl ctermfg=4 cterm=underline
 hi wikiLinkText ctermfg=5
 hi wikiTitleDelimiter ctermfg=5
-hi wikiTitleText cterm=underline
+hi wikiTitleText ctermfg=12 cterm=underline
 hi link wikiListMarker Statement
 hi link wikiOrderedListMarker Statement
 
-
 hi link wikiColons Comment
 hi link wikiKeyword Delimiter
-hi link wikiArgName Constant          
+hi link wikiArgName Constant
 hi link wikiArgEquals Operator
-hi link wikiArgValue String       
+hi link wikiArgValue String
 hi link wikiArgSeparator Operator 
 hi link wikiArgString String         
 
@@ -127,6 +181,8 @@ hi link wikiBlockWord Title
 hi wikiBlockNamespace ctermfg=5
 hi link wikiBlockDot Comment     
 hi link wikiBlockName Type
+
+hi! link wikiPlainBlockBody Normal
 
 hi link wikiHtmlBlock Comment
 hi wikiHtmlTagName ctermfg=4
@@ -156,5 +212,9 @@ hi link wikiRefColon2 Comment
 hi link wikiRefTopic Type
 hi link wikiRefContext Identifier
 hi wikiRefLabel ctermfg=4 cterm=underline
+
+hi! link wikiTagArgName Constant
+hi! link wikiTagArgEquals Operator
+hi! link wikiTagArgValue String
 
 setlocal conceallevel=2

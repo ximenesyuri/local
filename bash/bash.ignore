@@ -37,57 +37,7 @@ function snip(){
     fi
 }
 
-function ssh_set(){
-    declare -A keys
-    keys[intui]="$HOME/.ssh/intui/id_ed25519_yxm"
-    keys[vortice]="$HOME/.ssh/vortice/id_ed25519"
-    keys[main]="$HOME/.ssh/id_ed25519"
-
-    if [[ "${keys[@]}" =~ "$1" ]]; then
-        eval "$(ssh-agent -s)" > /dev/null 2>&1
-        ssh-add ${keys[$1]}
-    else
-        echo "error: \"$1\" is not a registered key."
-    fi
-}
-
-# VORTICE
-function vor_1(){
-    ssh_set vortice
-    ssh ubuntu@201.54.9.220
-}
-
-function vor_2(){
-    ssh_set vortice
-    ssh ubuntu@201.23.70.103
-}
-
 alias chat="google-chat-linux & disown && exit"
-
-# OTHER
-function up(){
-    yx=(typed utils comp gdrive canva rclone cli api search builder grid system)
-    vor=(sdk sites)
-    py u $1
-    for x in ${yx[@]}; do
-        if [[ "$x" == "$1" ]]; then
-            py i ximenesyuri/$1 --from github --protocol https --no-deps
-        fi
-    done
-    for x in ${vor[@]}; do
-        if [[ "$x" == "$1" ]]; then
-            py i vorticed/$1 --from github --protocol ssh --no-deps
-        fi
-    done
-    if [[ -z "$1" ]]; then
-        for x in ${yx[@]}; do
-            up $x
-        done
-        for x in ${vor[@]}; do
-            up $x
-        done
-    fi
-}
 
 # BIB FUNCTION
 function bib() {

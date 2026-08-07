@@ -7,94 +7,91 @@ if exists('*SyntaxRegion')
     call SyntaxRegion('```{ft}', '```')
 endif
 
-if hlexists('txtCode')
-    syntax clear txtCode
+if hlexists('talkCode')
+    syntax clear talkCode
 endif
-if hlexists('txtCodeBlock')
-   syntax clear txtCodeBlock
+if hlexists('talkCodeBlock')
+   syntax clear talkCodeBlock
 endif
 
-" italic: "_<text>_"
-syntax region txtItalic matchgroup=txtItalicDelim start=/_/ skip=/\\_/ end=/_/
+" italic: "_<text>_" (added concealends)
+syntax region talkItalic matchgroup=talkItalicDelim start=/_/ skip=/\\_/ end=/_/ concealends
 
-" bold: "__<text>__"
-syntax region txtBold matchgroup=txtBoldDelim start=/__/ skip=/\\_/ end=/__/
+" bold: "__<text>__" (added concealends)
+syntax region talkBold matchgroup=talkBoldDelim start=/__/ skip=/\\_/ end=/__/ concealends
 
 " delimiters: "(", ")", "'"
-syntax match txtDelimiter /[()"']/ containedin=ALL
+syntax match talkDelimiter /[()"']/ containedin=ALL
 
-" preformatted: "`<text>`" and "<pre>...</pre>"
-syntax region txtCode matchgroup=txtCodeDelim start=/`/ skip=/\\`/ end=/`/
+" preformatted: "`<text>`" (added concealends)
+syntax region talkCode matchgroup=talkCodeDelim start=/`/ skip=/\\`/ end=/`/ concealends
 
-" marked: "==<text>=="
-syntax match txtMarkFull /==.\{-}==/ contains=txtMarkDelim,txtMarkValue
-syntax match txtMarkDelim /==/ contained
-syntax match txtMarkValue /\(==\)\@<=.\{-}\ze==/ contained
+" marked: "==<text>==" (added conceal to Delim)
+syntax match talkMarkFull /==.\{-}==/ contains=talkMarkDelim,talkMarkValue
+syntax match talkMarkDelim /==/ contained conceal
+syntax match talkMarkValue /\(==\)\@<=.\{-}\ze==/ contained
 
-" underline: "++<text>++"
-syntax match txtUnderlineFull /++.\{-}++/ contains=txtUnderlineDelim,txtUnderlineValue
-syntax match txtUnderlineDelim /++/ contained
-syntax match txtUnderlineValue /\(++\)\@<=.\{-}\ze++/ contained
+" underline: "+<text>+" (added conceal to Delim)
+syntax match talkUnderlineFull /+.\{-}+/ contains=talkUnderlineDelim,talkUnderlineValue
+syntax match talkUnderlineDelim /+/ contained conceal
+syntax match talkUnderlineValue /\(+\)\@<=.\{-}\ze+/ contained
 
-" tagged: "=<tag>=<text>=="
-syntax match txtTagFull /=[^=]\+=.\{-}==/ contains=txtTagStart,txtTagValue,txtTagEnd
-syntax match txtTagStart /=[^=]\+=/ contained contains=txtTagDelim,txtTagLabel
-syntax match txtTagDelim /=/ contained
-syntax match txtTagLabel /[^=]\+/ contained
-syntax match txtTagValue /\(=[^=]\+=\)\@<=.\{-}\ze==/ contained
-syntax match txtTagEnd /==/ contained
+" tagged: "=<tag>=<text>==" (added conceal to Delim and End)
+syntax match talkTagFull /=[^=]\+=.\{-}==/ contains=talkTagStart,talkTagValue,talkTagEnd
+syntax match talkTagStart /=[^=]\+=/ contained contains=talkTagDelim,talkTagLabel
+syntax match talkTagDelim /=/ contained conceal
+syntax match talkTagLabel /[^=]\+/ contained
+syntax match talkTagValue /\(=[^=]\+=\)\@<=.\{-}\ze==/ contained
+syntax match talkTagEnd /==/ contained conceal
 
-" link: "[<label>](<url>)"
-syntax match txtLinkFull /\[.\{-}\](.\{-})/ contains=txtLinkText,txtLinkUrl
-syntax region txtLinkText matchgroup=Comment start=/\[/ end=/\]/ contained nextgroup=txtLinkUrl
-syntax region txtLinkUrl matchgroup=Comment start=/(/ end=/)/ contained
+" link: "[<label>](<url>)" (added concealends to text, conceal to url)
+syntax match talkLinkFull /\[.\{-}\](.\{-})/ contains=talkLinkText,talkLinkUrl
+syntax region talkLinkText matchgroup=Comment start=/\[/ end=/\]/ contained nextgroup=talkLinkUrl concealends
+syntax region talkLinkUrl matchgroup=Comment start=/(/ end=/)/ contained conceal
 
 " title: "# <title>"
-syntax match txtTitleDelimiter /^\s*#\+/ nextgroup=txtTitleSpaces
-syntax match txtTitleSpaces /\s\+/ contained nextgroup=txtTitleText
-syntax match txtTitleText /.*$/ contained
+syntax match talkTitleDelimiter /^\s*#\+/ nextgroup=talkTitleSpaces
+syntax match talkTitleSpaces /\s\+/ contained nextgroup=talkTitleText
+syntax match talkTitleText /.*$/ contained
 
-" lists: "<n>. <something>" and "> <something>"
-syntax match txtListMarker /^\s*\zs\(>\)\ze\s\+/
-syntax match txtOrderedListMarker /^\s*\zs\d\+[.)]\ze\s\+/
+" lists: "<n>. <something>", "> <something>", and "1> <something>"
+syntax match talkListMarker /^\s*\zs\d*>/
+syntax match talkOrderedListMarker /^\s*\zs\d\+[.)]\ze\s\+/
 
-syntax match txtFrontmatterSeparator "^-\+$"
+" frontmatter
+syntax match talkFrontmatterSeparator "^-\+$"
+syntax match talkFrontmatterKey "^\w\+\ze:"
+syntax match talkFrontmatterDelimiter ":"
+syntax match talkFrontmatterValue ":\s*\zs.*$"
 
-syntax match txtFrontmatterKey "^\w\+\ze:"
+highlight default link talkFrontmatterSeparator Comment
+highlight default link talkFrontmatterKey       Identifier
+highlight default link talkFrontmatterDelimiter Operator
+highlight default link talkFrontmatterValue     String
 
-syntax match txtFrontmatterDelimiter ":"
-
-syntax match txtFrontmatterValue ":\s*\zs.*$"
-
-highlight default link txtFrontmatterSeparator Comment
-highlight default link txtFrontmatterKey       Identifier
-highlight default link txtFrontmatterDelimiter Operator
-highlight default link txtFrontmatterValue     String
-
-
-" numbers
-syntax match txtNumber /\<\d\+\([.,]\d\+\)\?\>\([.)]\s\)\@!/ containedin=ALL
+" numbers (ignores digits immediately followed by '>')
+syntax match talkNumber /\<\d\+\([.,]\d\+\)\?\>\([.)>]\)\@!/ containedin=ALL
 
 " HIGHLIGHT
-hi txtItalic ctermfg=2 cterm=italic
-hi link txtItalicDelim Comment
-hi txtBold ctermfg=2 cterm=Bold
-hi link txtBoldDelim Comment
+hi talkItalic ctermfg=2 cterm=italic
+hi link talkItalicDelim Comment
+hi talkBold ctermfg=2 cterm=Bold
+hi link talkBoldDelim Comment
 
-hi link txtDelimiter Delimiter
-hi link txtNumber Constant
+hi link talkDelimiter Delimiter
+hi link talkNumber Constant
 
-hi txtLinkUrl ctermfg=4 cterm=underline
-hi txtLinkText ctermfg=5
-hi txtListMarker ctermfg=1 cterm=bold
-hi link txtOrderedListMarker Constant
+hi talkLinkUrl ctermfg=4 cterm=underline
+hi talkLinkText ctermfg=5
+hi talkListMarker ctermfg=1 cterm=bold
+hi link talkOrderedListMarker Constant
 
 " ==something==
-hi link txtMarkDelim Comment
-hi link txtMarkValue Highlight
+hi link talkMarkDelim Comment
+hi link talkMarkValue Highlight
 
 " ++something++
-hi link txtUnderlineDelim Comment
-hi link txtUnderlineValue Underlined
+hi link talkUnderlineDelim Comment
+hi link talkUnderlineValue Underlined
 
 setlocal conceallevel=2

@@ -70,3 +70,6 @@
     autocmd FileType tex,md,markdown,wiki setlocal spell
     autocmd FileType tex,md,markdown,wiki syntax spell toplevel
     set spelllang=en_us,pt_br
+
+" OTHERS
+set undofile
