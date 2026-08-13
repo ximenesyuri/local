@@ -25,7 +25,7 @@ $0
 \`\`\`
 endsnippet
 
-snippet "y "preformatted display" b
+snippet "yml "preformatted display" b
 \`\`\`yaml
 $0
 \`\`\`
@@ -47,6 +47,20 @@ endsnippet
 snippet globals "frontmatter"
 {{ block.globals }}
 :: title: $0
+:: weight:
+:: template:
+{{ block.end }}
+endsnippet
+
+snippet post "frontmatter"
+{{ block.globals }}
+:: title: $0
+:: weight:
+:: template: blog.html
+:: header:
+:: tags:
+:: thumb:
+:: related:
 {{ block.end }}
 endsnippet
 
@@ -60,23 +74,17 @@ snippet toc "toc" w
 {{ toc }}
 endsnippet
 
-snippet files "files" w
-{{ files }}
-endsnippet
-
 # LIST
-snippet list.defs "defs" w
-{{ block.hide }}
-:: title: [ definitions ]
-:: hide: {{ list.defs }}
-{{ block.end }}
+snippet defs "defs" w
+{{ list.defs }}
 endsnippet
 
-snippet list.types "types" w
-{{ block.hide }}
-:: title: [ types ]
-:: hide: {{ list.types }}
-{{ block.end }}
+snippet types "types" w
+{{ list.types }}
+endsnippet
+
+snippet pages "types" w
+{{ list.pages }}
 endsnippet
 
 # BLOCKS
@@ -87,6 +95,12 @@ snippet def "block.def"
 :: idea: ${3:idea}
 :: details: ${4:details}
 :: __refs__: ${5:refs}
+{{ block.end }}
+endsnippet
+
+snippet quote "block.quote"
+{{ block.quote }}
+:: text: $0
 {{ block.end }}
 endsnippet
 
@@ -145,12 +159,12 @@ snippet ref "ref"
 {{${1:topic}:${2:contexto}.${3:entry}:${4:label}}}
 endsnippet
 
-snippet "typed\.([a-zA-Z0-9_-]+)" "typed refs" r
-{{def:typed.`!p snip.rv = match.group(1)`:`!p snip.rv = match.group(1)`}}
+snippet "page\.([a-zA-Z0-9_.-]+)" "page refs" r
+{{page:`!p snip.rv = match.group(1)`:`!p snip.rv = '.'.join(match.group(1).split('.')[-2:])`}}
 endsnippet
 
-snippet "typedsystem\.([a-zA-Z0-9_-]+)" "typedsystem refs" r
-{{def:typedsystem.`!p snip.rv = match.group(1)`:`!p snip.rv = match.group(1)`}}
+snippet "def\.([a-zA-Z0-9_.-]+)" "def refs" r
+{{def:`!p snip.rv = match.group(1)`:`!p snip.rv = '.'.join(match.group(1).split('.')[-2:])`}}
 endsnippet
 
 # HYPERLINK

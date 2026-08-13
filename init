@@ -22,6 +22,16 @@ __alias() {
 }
 
 __func() {
+    sync() {
+        if [[ $1 == "wiki" ]]; then
+            cp -r $HOME/.omni/providers/omni/tools/wiki.d/* $DEV/omni/tools/tools/wiki.d
+            cp $HOME/.omni/providers/omni/tools/wiki $DEV/omni/tools/tools/wiki
+            echo "wiki has been synced."
+        else 
+            echo "option not defined"
+        fi
+    }
+    
     bc() {
         if ! command -v bc > /dev/null 2>&1; then
             echo "Error: missing bc."
