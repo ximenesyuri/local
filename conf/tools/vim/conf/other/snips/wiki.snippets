@@ -1,48 +1,3 @@
-# CODE
-snippet ' "preformatted inline" b
-\`
-endsnippet
-
-snippet " "preformatted display" b 
-\`\`\`
-endsnippet
-
-snippet "" "preformatted display" b
-\`\`\`
-$0
-\`\`\`
-endsnippet
-
-snippet "b "preformatted display" b 
-\`\`\`bash
-$0  
-\`\`\`
-endsnippet
-
-snippet "py "preformatted display" b 
-\`\`\`python
-$0
-\`\`\`
-endsnippet
-
-snippet "yml "preformatted display" b
-\`\`\`yaml
-$0
-\`\`\`
-endsnippet
-
-snippet "json "preformatted display" b
-\`\`\`json
-$0
-\`\`\`
-endsnippet
-
-snippet "js "preformatted display" b
-\`\`\`js
-$0
-\`\`\`
-endsnippet
-
 # VARS
 snippet globals "frontmatter"
 {{ block.globals }}
@@ -55,8 +10,7 @@ endsnippet
 snippet post "frontmatter"
 {{ block.globals }}
 :: title: $0
-:: weight:
-:: template: blog.html
+:: template: post
 :: header:
 :: tags:
 :: thumb:
@@ -76,11 +30,11 @@ endsnippet
 
 # LIST
 snippet defs "defs" w
-{{ list.defs }}
+{{ list.block.def }}
 endsnippet
 
 snippet types "types" w
-{{ list.types }}
+{{ list.block.type }}
 endsnippet
 
 snippet pages "types" w
@@ -147,16 +101,26 @@ endsnippet
 
 snippet diagram "diagram" w
 {{ block.diagram }}
-:: __entity:
-:: __context:
+:: __entity__:
+:: __context__:
 :: node:
 :: arrow: 
+{{ block.end }}
+endsnippet
+
+snippet code "diagram" w
+{{ block.code lang=${1:lang} }}
+$0
 {{ block.end }}
 endsnippet
 
 # REFS
 snippet ref "ref"
 {{${1:topic}:${2:contexto}.${3:entry}:${4:label}}}
+endsnippet
+
+snippet "page" "page ref" r
+{{page:${1:path}:${2:label}}}
 endsnippet
 
 snippet "page\.([a-zA-Z0-9_.-]+)" "page refs" r
@@ -172,7 +136,7 @@ snippet [ "hyperlink" w
 [${1:label}](${2:url})
 endsnippet
 
-snippet "([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)" "github links" r
+snippet "gh.([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)" "github links" r
 [`!p snip.rv = match.group(1)`/`!p snip.rv = match.group(2)`](https://github.com/`!p snip.rv = match.group(1)`/`!p snip.rv = match.group(2)`)
 endsnippet
 

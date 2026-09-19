@@ -2,7 +2,13 @@ let s:__HERE = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 let s:__SCRIPTS = s:__HERE . '/scripts'
 let s:__OTHER   = s:__HERE . '/other'
 
-let s:GLOBALS   = ['base', 'keys', 'lsp', 'helper/remember', 'plugin/ultisnippets']
+let s:GLOBALS   = [
+   \ 'base', 'keys', 'lsp',
+   \ 'helper/remember',
+   \ 'plugin/ultisnippets',
+   \ 'plugin/himalaya'
+\]
+
 let s:FILETYPES = ['python', 'markdown', 'ai', 'sh', 'css', 'wiki', 'talk']
 
 function! s:EnableIndentLines()
