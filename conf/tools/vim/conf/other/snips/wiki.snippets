@@ -9,12 +9,13 @@ endsnippet
 
 snippet post "frontmatter"
 {{ block.globals }}
-:: title: $0
+:: title: ${1:title}
 :: template: post
-:: header:
-:: tags:
-:: thumb:
-:: related:
+:: author: ${2:author}
+:: header: ${3:header}
+:: tags: ${4:tags}
+:: thumb: ./${5:thumb}
+:: related: tags=*${6:related}*
 {{ block.end }}
 endsnippet
 
@@ -30,7 +31,7 @@ endsnippet
 
 # LIST
 snippet defs "defs" w
-{{ list.block.def }}
+{{ list.block.def root=${1:root} }}
 endsnippet
 
 snippet types "types" w
@@ -38,17 +39,27 @@ snippet types "types" w
 endsnippet
 
 snippet pages "types" w
-{{ list.pages }}
+{{ list.pages root=${1:root} page_label=globals.header exclude=*index* }}
 endsnippet
 
 # BLOCKS
 snippet def "block.def"
 {{ block.def }}
-:: term: ${1:term}
-:: context: ${2:context}
+:: __context__: ${1:context}
+:: term: ${2:term}
 :: idea: ${3:idea}
 :: details: ${4:details}
-:: __refs__: ${5:refs}
+{{ block.end }}
+endsnippet
+
+snippet ref "block.ref"
+{{ block.def }}
+:: __context__: ${1:context}
+:: title: ${2:title}
+:: author: ${3:author}
+:: desc: ${4:desc}
+:: links: ${5:links} 
+:: path: /bib/${6:path}
 {{ block.end }}
 endsnippet
 
@@ -60,10 +71,9 @@ endsnippet
 
 snippet type "block.type"
 {{ block.type }}
-:: __entity__: ${1:entity}
-:: __context__: ${2:context}
-:: type: ${3:type}
-:: typesystem: ${3:typesystem}
+:: __context__: ${1:context}
+:: type: ${2:type}
+:: system: ${3:system}
 :: meta: ${3:meta}
 :: isterm: ${4:isterm}
 :: issub: ${4:issub}
@@ -115,10 +125,6 @@ $0
 endsnippet
 
 # REFS
-snippet ref "ref"
-{{${1:topic}:${2:contexto}.${3:entry}:${4:label}}}
-endsnippet
-
 snippet "page" "page ref" r
 {{page:${1:path}:${2:label}}}
 endsnippet
@@ -127,8 +133,12 @@ snippet "page\.([a-zA-Z0-9_.-]+)" "page refs" r
 {{page:`!p snip.rv = match.group(1)`:`!p snip.rv = '.'.join(match.group(1).split('.')[-2:])`}}
 endsnippet
 
-snippet "def\.([a-zA-Z0-9_.-]+)" "def refs" r
-{{def:`!p snip.rv = match.group(1)`:`!p snip.rv = '.'.join(match.group(1).split('.')[-2:])`}}
+snippet "def\.([\w.-]+)" "def refs" r
+{{def:`!p snip.rv = match.group(1)`:`!p snip.rv = '.'.join(match.group(1).split('.')[-1:])`}}
+endsnippet
+
+snippet "ref\.([\w.-]+)" "ref refs" r
+{{ref:`!p snip.rv = match.group(1)`:`!p snip.rv = '.'.join(match.group(1).split('.')[-1:])`}}
 endsnippet
 
 # HYPERLINK

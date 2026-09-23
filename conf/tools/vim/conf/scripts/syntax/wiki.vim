@@ -20,9 +20,6 @@ syntax match wikiDelimiter /[()"']/ containedin=ALL
 syntax region wikiCode matchgroup=wikiCodeDelim start=/`\@<!`\(`\)\@!/ skip=/\\`/ end=/`\@<!`\(`\)\@!/ concealends
 syntax region wikiPreBlock matchgroup=wikiHtmlBlock start=/<pre>/ end=/<\/pre>/
 
-" generic block code: "```" (without language specifier)
-syntax region wikiCodeBlock matchgroup=wikiCodeDelim start=/^\s*```\s*$/ end=/^\s*```\s*$/
-
 " marked: "==<text>=="
 syntax match wikiMarkFull /==.\{-}==/ contains=wikiMarkDelim,wikiMarkValue
 syntax match wikiMarkDelim /==/ contained
@@ -32,14 +29,6 @@ syntax match wikiMarkValue /\(==\)\@<=.\{-}\ze==/ contained
 syntax match wikiUnderlineFull /++.\{-}++/ contains=wikiUnderlineDelim,wikiUnderlineValue
 syntax match wikiUnderlineDelim /++/ contained conceal
 syntax match wikiUnderlineValue /\(++\)\@<=.\{-}\ze++/ contained
-
-" tagged: "=<tag>=<text>=="
-syntax match wikiTagFull /=[^=]\+=.\{-}==/ contains=wikiTagStart,wikiTagValue,wikiTagEnd
-syntax match wikiTagStart /=[^=]\+=/ contained contains=wikiTagDelim,wikiTagLabel
-syntax match wikiTagDelim /=/ contained
-syntax match wikiTagLabel /[^=]\+/ contained
-syntax match wikiTagValue /\(=[^=]\+=\)\@<=.\{-}\ze==/ contained
-syntax match wikiTagEnd /==/ contained
 
 " link: "[<label>](<url>)"
 syntax match wikiLinkFull /\[.\{-}\](.\{-})/ contains=wikiLinkText,wikiLinkUrl
@@ -73,7 +62,7 @@ syntax match wikiBlockDot /\./ contained
 syntax match wikiBlockName /\(\.\)\@<=[a-zA-Z0-9_-]\+/ contained
 
 " html: "<tag class='...'>...</tag>"
-syntax region wikiCustomHtmlTag matchgroup=wikiHtmlBlock start=/<\/\?/ end=/>/ containedin=ALL oneline contains=wikiHtmlTagName,wikiHtmlArgName,wikiHtmlArgEquals,wikiHtmlArgString
+syntax region wikiCustomHtmlTag matchgroup=wikiHtmlBlock start=/<\/\?/ end=/>/ containedin=ALLBUT,wikiCode oneline contains=wikiHtmlTagName,wikiHtmlArgName,wikiHtmlArgEquals,wikiHtmlArgString
 syntax match wikiHtmlTagName /\(<\/\?\)\@<=[a-zA-Z0-9_-]\+/ contained
 syntax match wikiHtmlArgName /[a-zA-Z0-9_-]\+\ze=/ contained
 syntax match wikiHtmlArgEquals /=/ contained
