@@ -1,0 +1,403 @@
+[ui.border]
+default = "plain"
+composer = "plain"
+message = "plain"
+forum = "plain"
+
+[ui.indicator]
+selection = "> "
+
+[highlight.Normal]
+foreground = "terminal_default"
+background = "terminal_default"
+
+[highlight.Strong]
+bold = false
+
+[highlight.Emphasis]
+italic = true
+
+[highlight.Muted]
+dim = true
+
+[highlight.Title]
+link = "none"
+
+[highlight.Heading]
+link = "Strong"
+
+[highlight.Decoration]
+link = "Muted"
+
+[highlight.Hint]
+link = "Muted"
+
+[highlight.Description]
+link = "Muted"
+
+[highlight.Shortcut]
+link = "Muted"
+
+[highlight.Activity]
+link = "Muted"
+
+[highlight.ChannelTypeMarker]
+link = "Muted"
+
+[highlight.FieldLabel]
+link = "Muted"
+
+[highlight.SearchContext]
+link = "Muted"
+
+[highlight.Timestamp]
+link = "Muted"
+
+[highlight.Placeholder]
+link = "Muted"
+
+[highlight.Disabled]
+link = "Muted"
+
+[highlight.Loading]
+link = "Muted"
+
+[highlight.Edited]
+link = "Muted"
+italic = true
+
+[highlight.Unavailable]
+link = "Muted"
+strikethrough = true
+
+[highlight.LoginTitle]
+link = "Title"
+foreground = "#87afaf"
+
+[highlight.LoginHint]
+link = "Muted"
+
+[highlight.PaneTitle]
+link = "Title"
+
+[highlight.ModalTitle]
+link = "Title"
+
+[highlight.ComposerTitle]
+link = "Title"
+
+[highlight.HeaderTitle]
+link = "Title"
+foreground = "#87afaf"
+
+[highlight.HeaderLabel]
+link = "Muted"
+
+[highlight.MessageAuthor]
+link = "Strong"
+
+[highlight.MessageTimestamp]
+link = "Timestamp"
+
+[highlight.CategoryHeading]
+link = "Heading"
+
+[highlight.MemberGroupHeading]
+link = "Heading"
+
+[highlight.MessageSecondary]
+link = "Muted"
+
+[highlight.ForumSecondary]
+link = "Muted"
+
+[highlight.EmbedAuthor]
+link = "Emphasis"
+
+[highlight.EmbedTitle]
+link = "Strong"
+foreground = "blue"
+
+[highlight.EmbedFieldName]
+link = "Strong"
+underline = false
+
+[highlight.EmbedFooter]
+link = "Muted"
+italic = false
+
+[highlight.CodeBlockBorder]
+link = "Border"
+dim = false
+
+[highlight.ScrollbarTrack]
+link = "ScrollbarThumb"
+dim = false
+
+[highlight.UnavailableEmoji]
+link = "Unavailable"
+
+[highlight.HeaderError]
+link = "Error"
+bold = false
+
+[highlight.HeaderWarning]
+link = "Warning"
+bold = false
+
+[highlight.Border]
+foreground = "gray"
+
+[highlight.FocusBorder]
+foreground = "#87afaf"
+
+[highlight.Selection]
+foreground = "#af87d7"
+background = "none"
+bold = false
+dim = false
+
+[highlight.SelectionBorder]
+foreground = "blue"
+bold = false
+
+[highlight.PaneBorder]
+link = "Border"
+
+[highlight.FocusedPaneBorder]
+link = "FocusBorder"
+bold = false
+
+[highlight.LoginBorder]
+link = "FocusBorder"
+
+[highlight.ComposerBorder]
+link = "Border"
+
+[highlight.ActiveComposerBorder]
+link = "FocusBorder"
+bold = false
+
+[highlight.ModalBorder]
+link = "FocusBorder"
+bold = false
+
+[highlight.ComposerPickerBorder]
+link = "FocusBorder"
+
+[highlight.SelectedRow]
+link = "Selection"
+
+[highlight.SelectionMarker]
+link = "Selection"
+
+[highlight.ActiveField]
+foreground = "#af87d7"
+bold = false
+
+[highlight.ActiveTab]
+link = "Selection"
+
+[highlight.MessageSelectedBorder]
+link = "SelectionBorder"
+
+[highlight.ForumBorder]
+link = "FocusBorder"
+
+[highlight.ForumSelectedBorder]
+link = "SelectionBorder"
+
+[highlight.ScrollbarThumb]
+foreground = "#AAAAAA"
+
+[highlight.UnreadNotice]
+foreground = "#87afaf"
+bold = true
+
+[highlight.Editing]
+foreground = "yellow"
+
+[highlight.Reaction]
+foreground = "#87afaf"
+
+[highlight.SelfReaction]
+foreground = "yellow"
+
+[highlight.PresenceOnline]
+foreground = "green"
+
+[highlight.PresenceIdle]
+foreground = "#B48C00"
+
+[highlight.PresenceDnd]
+foreground = "red"
+
+[highlight.PresenceOffline]
+link = "Normal"
+dim = true
+
+[highlight.VoiceDisabled]
+foreground = "yellow"
+
+[highlight.VoiceConnection]
+foreground = "yellow"
+bold = false
+
+[highlight.FolderFallback]
+foreground = "#87afaf"
+
+[highlight.NavigationActive]
+foreground = "#b6b3eb"
+background = "#262626"
+bold = false
+
+[highlight.NavigationMentioned]
+foreground = "#FFA500"
+
+[highlight.NavigationNotified]
+foreground = "terminal_default"
+
+[highlight.NavigationUnread]
+foreground = "terminal_default"
+
+[highlight.MentionBadge]
+foreground = "#FFA500"
+
+[highlight.NotificationBadge]
+foreground = "terminal_default"
+
+[highlight.JoinedVoiceChannel]
+foreground = "yellow"
+bold = false
+
+[highlight.VoiceSpeaking]
+foreground = "blue"
+bold = false
+
+[highlight.ReplyPingEnabled]
+foreground = "#87afaf"
+
+[highlight.Tag]
+foreground = "#87afaf"
+
+[highlight.RelationshipFriend]
+foreground = "blue"
+
+[highlight.RelationshipIncoming]
+foreground = "yellow"
+
+[highlight.RelationshipOutgoing]
+foreground = "yellow"
+
+[highlight.RelationshipBlocked]
+foreground = "red"
+
+[highlight.RelationshipNone]
+foreground = "terminal_default"
+dim = true
+
+[highlight.GaugeFill]
+foreground = "#87afaf"
+
+[highlight.MessageBody]
+foreground = "terminal_default"
+
+[highlight.MarkdownHeading1]
+link = "Heading"
+foreground = "#87afaf"
+
+[highlight.MarkdownHeading2]
+link = "Heading"
+underline = true
+
+[highlight.MarkdownHeading3]
+link = "Heading"
+
+[highlight.MarkdownQuote]
+foreground = "gray"
+
+[highlight.MarkdownMarker]
+foreground = "gray"
+
+[highlight.MessageAttachment]
+foreground = "#87afaf"
+
+[highlight.ImageOverflow]
+link = "MessageAttachment"
+bold = false
+
+[highlight.InlineCode]
+foreground = "#b6b3eb"
+background = "#262626"
+
+[highlight.InlineTimestamp]
+foreground = "#DBDEE1"
+background = "#3B3C43"
+
+[highlight.MessageLink]
+foreground = "#87afaf"
+underline = true
+
+[highlight.MentionSelf]
+foreground = "yellow"
+background = "#5C4C23"
+
+[highlight.MentionOther]
+foreground = "#C1CEF7"
+background = "#28325C"
+
+[highlight.MentionRole]
+
+[highlight.MentionPickerRole]
+foreground = "magenta"
+
+[highlight.EmbedGutter]
+foreground = "red"
+
+[highlight.EmbedLink]
+foreground = "blue"
+underline = true
+
+[highlight.CommandName]
+link = "MessageSecondary"
+foreground = "#5865F2"
+
+[highlight.SystemThreadName]
+foreground = "#87afaf"
+bold = false
+
+[highlight.PollAnswerSelected]
+foreground = "terminal_default"
+bold = true
+
+[highlight.PollWinner]
+foreground = "terminal_default"
+bold = true
+
+[highlight.UnreadBanner]
+foreground = "terminal_default"
+background = "#5865F2"
+
+[highlight.UnreadDivider]
+foreground = "#ED4245"
+
+[highlight.ForumPinnedBadge]
+foreground = "yellow"
+bold = true
+
+[highlight.BotBadge]
+link = "Normal"
+background = "#5865F2"
+bold = true
+
+[highlight.Error]
+foreground = "red"
+
+[highlight.Warning]
+foreground = "yellow"
+
+[highlight.Success]
+foreground = "blue"
+
+[highlight.Info]
+foreground = "#87afaf"
