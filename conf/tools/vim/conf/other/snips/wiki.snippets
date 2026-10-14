@@ -53,7 +53,7 @@ snippet def "block.def"
 endsnippet
 
 snippet ref "block.ref"
-{{ block.def }}
+{{ block.ref }}
 :: __context__: ${1:context}
 :: title: ${2:title}
 :: author: ${3:author}
@@ -133,8 +133,12 @@ snippet "page\.([a-zA-Z0-9_.-]+)" "page refs" r
 {{page:`!p snip.rv = match.group(1)`:`!p snip.rv = '.'.join(match.group(1).split('.')[-2:])`}}
 endsnippet
 
-snippet "def\.([\w.-]+)" "def refs" r
-{{def:`!p snip.rv = match.group(1)`:`!p snip.rv = '.'.join(match.group(1).split('.')[-1:])`}}
+snippet "def\.([^\s.]+)\.([^\s.]+)" "def refs" r
+{{def:`!p snip.rv = match.group(1)`.`!p snip.rv = match.group(2)`:`!p snip.rv = match.group(2)`}}
+endsnippet
+
+snippet "def\.([^\s.]+)\.([^\s.]+)\.([^\s.]+)" "def refs with label" r
+{{def:`!p snip.rv = match.group(1)`.`!p snip.rv = match.group(2)`:`!p snip.rv = match.group(3)`}}
 endsnippet
 
 snippet "ref\.([\w.-]+)" "ref refs" r

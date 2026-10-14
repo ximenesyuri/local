@@ -5,9 +5,10 @@ let s:__OTHER   = s:__HERE . '/other'
 let s:GLOBALS   = [
    \ 'base', 'keys', 'lsp',
    \ 'helper/remember',
+   \ 'plugin/defs',
    \ 'plugin/ultisnippets',
    \ 'plugin/himalaya'
-\]
+   \ ]
 
 let s:FILETYPES = ['python', 'markdown', 'ai', 'sh', 'css', 'wiki', 'talk']
 

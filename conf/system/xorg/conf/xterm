@@ -79,6 +79,7 @@
     *VT100.Translations: #override \n\
         Ctrl <Key>k: scroll-back(1) \n\
         Ctrl <Key>j: scroll-forw(1) \n\
+        Ctrl <Key>Return: string("\033[13;5u") \n\
         Shift Ctrl <Key>c: selected-end(CLIPBOARD) \n\
         Shift Ctrl <Key>v: insert-selection(CLIPBOARD) \n\ 
         Ctrl  Mod1 <Key>plus: larger-vt-font() \n\

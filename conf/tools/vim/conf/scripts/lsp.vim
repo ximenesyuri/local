@@ -4,6 +4,11 @@ function! g:SmartTab()
         return ""
     endif
     
+    " Safely invoke defs completion
+    if exists('*g:TriggerDefsComplete') && g:TriggerDefsComplete()
+        return ""
+    endif
+    
     call UltiSnips#ExpandSnippetOrJump()
     if get(g:, 'ulti_expand_or_jump_res', 0) == 0
         call feedkeys("\<Tab>", "n")
