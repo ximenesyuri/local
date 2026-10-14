@@ -9,8 +9,12 @@ __prompt(){
 __export() {
     export EDITOR=vim
     export BROWSER=firefox
-    export DEV=$HOME/etc/dev
+    export ETC=$HOME/etc
+    export DEV=$ETC/dev
     export VOR=$DEV/vor
+    export LEMMA=$DEV/lemma
+    export TYPED=$DEV/typed
+    export BIB=$HOME/etc/bib
 }
 
 __alias() {
@@ -19,18 +23,10 @@ __alias() {
     alias restart="xrdb $HOME/.Xresources"
     alias pt="setxkbmap -model abnt2 -layout br -variant abnt2"
     alias en="setxkbmap -layout us -variant intl"
+    alias mail="vim -c Himalaya"
 }
 
-__func() {
-    sync() {
-        if [[ $1 == "wiki" ]]; then
-            cp -r $HOME/.omni/providers/omni/tools/wiki/* $DEV/omni/tools/tools/wiki
-            echo "wiki has been synced."
-        else 
-            echo "option not defined"
-        fi
-    }
-    
+__func() {    
     bc() {
         if ! command -v bc > /dev/null 2>&1; then
             echo "Error: missing bc."

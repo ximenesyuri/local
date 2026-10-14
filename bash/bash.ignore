@@ -41,21 +41,48 @@ alias chat="google-chat-linux & disown && exit"
 
 # BIB FUNCTION
 function bib() {
-    if [ -z $BIB ]; then
-        echo "BIB env not defined."
+    if [ -z "$BIB" ]; then
+        echo "BIB env not set."
         return 1
     fi
+
+    if [ "$1" = "send" ]; then
+        if [ -z "$2" ]; then
+            echo "Usage: bib send <file>"
+            return 1
+        fi
+        
+        local file_path=$(realpath "$2")
+        local bib_path=$(realpath "$BIB")
+        
+        if [[ "$file_path" == "$bib_path"/* ]]; then
+            local rel_path="${file_path#$bib_path/}"
+            
+            echo "Sending to lemma:$rel_path..."
+            rclone copyto "$file_path" "lemma:$rel_path"
+            return $?
+        else
+            echo "Error: '$2' is not inside $BIB"
+            return 1
+        fi
+    fi
+
     local line filepath basename
-    line=$(find "$BIB" -maxdepth 1 -type f -name '*.pdf' \
+    
+    line=$(find "$BIB" -type f -name '*.pdf' \
         | awk -F/ '{print $0 "\t" gensub(/\.pdf$/, "", 1, $NF)}' \
         | sort --reverse -t$'\t' -k2 \
         | fzf --with-nth=2 --delimiter='\t' \
-            --preview 'pdftotext {1} - | head -40' --preview-window=right:70%)
+            --preview 'pdftotext {1} -' \
+            --preview-window=right:70% \
+            --bind 'right:preview-down,left:preview-up,shift-right:preview-page-down,shift-left:preview-page-up')
+            
     [ -z "$line" ] && return
     filepath="${line%%$'\t'*}"
     basename="${line#*$'\t'}"
     [ -n "$filepath" ] && zathura "$filepath"
 }
+
 
 function importtime(){
     if [[ -n "$1" ]]; then
